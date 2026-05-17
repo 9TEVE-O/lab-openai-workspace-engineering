@@ -1,0 +1,679 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Safe Intake Clickable Prototype</title>
+  <style>
+    :root {
+      --bg: #f7f1e8;
+      --panel: #fffaf2;
+      --ink: #251f1a;
+      --muted: #6e6258;
+      --line: #d8cab9;
+      --accent: #9f6b3f;
+      --accent-dark: #704828;
+      --good: #1f7a4d;
+      --warn: #9a6a00;
+      --bad: #9b2c2c;
+      --soft: #efe4d4;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: radial-gradient(circle at top left, #fff7ec, var(--bg));
+      color: var(--ink);
+      font-family: var(--sans);
+      line-height: 1.5;
+    }
+
+    header {
+      padding: 28px clamp(18px, 4vw, 48px) 18px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 250, 242, 0.86);
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      backdrop-filter: blur(12px);
+    }
+
+    h1, h2, h3 { margin: 0 0 10px; line-height: 1.12; }
+    h1 { font-size: clamp(28px, 5vw, 48px); letter-spacing: -0.04em; }
+    h2 { font-size: clamp(20px, 3vw, 30px); }
+    h3 { font-size: 16px; }
+    p { margin: 0 0 12px; }
+
+    .subhead { max-width: 920px; color: var(--muted); font-size: 16px; }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+      gap: 20px;
+      padding: 22px clamp(18px, 4vw, 48px) 48px;
+    }
+
+    @media (max-width: 920px) {
+      .layout { grid-template-columns: 1fr; }
+      header { position: static; }
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      box-shadow: 0 10px 30px rgba(68, 44, 25, 0.08);
+      padding: 18px;
+    }
+
+    .stack { display: grid; gap: 16px; }
+
+    .statebar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12px;
+      color: var(--muted);
+      background: #fffdf8;
+    }
+
+    .pill.active {
+      color: #fff;
+      background: var(--accent-dark);
+      border-color: var(--accent-dark);
+      font-weight: 700;
+    }
+
+    .pill.done {
+      color: var(--good);
+      border-color: rgba(31, 122, 77, 0.35);
+      background: rgba(31, 122, 77, 0.08);
+    }
+
+    .status {
+      display: inline-flex;
+      padding: 7px 10px;
+      border-radius: 10px;
+      font: 700 12px var(--mono);
+      background: var(--soft);
+      color: var(--accent-dark);
+      margin-bottom: 12px;
+    }
+
+    .status.good { background: rgba(31, 122, 77, 0.1); color: var(--good); }
+    .status.bad { background: rgba(155, 44, 44, 0.1); color: var(--bad); }
+    .status.warn { background: rgba(154, 106, 0, 0.12); color: var(--warn); }
+
+    button {
+      border: 0;
+      border-radius: 12px;
+      padding: 10px 14px;
+      background: var(--accent);
+      color: white;
+      font-weight: 750;
+      cursor: pointer;
+      box-shadow: 0 5px 16px rgba(112, 72, 40, 0.2);
+      transition: transform 0.14s ease, background 0.14s ease, opacity 0.14s ease;
+    }
+
+    button:hover { transform: translateY(-1px); background: var(--accent-dark); }
+    button.secondary { background: #3d342c; }
+    button.ghost { background: transparent; color: var(--accent-dark); border: 1px solid var(--line); box-shadow: none; }
+    button.danger { background: var(--bad); }
+    button:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+    .buttons { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+
+    pre {
+      margin: 0;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      font-family: var(--mono);
+      font-size: 12px;
+      background: #2b241f;
+      color: #fff7ec;
+      padding: 14px;
+      border-radius: 14px;
+      border: 1px solid #453a32;
+      max-height: 360px;
+      overflow: auto;
+    }
+
+    .doc {
+      background: #fffdf8;
+      border: 1px dashed var(--line);
+      border-radius: 14px;
+      padding: 14px;
+      font-family: var(--mono);
+      font-size: 13px;
+      white-space: pre-wrap;
+      color: #332a23;
+    }
+
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media (max-width: 760px) { .grid2 { grid-template-columns: 1fr; } }
+
+    .finding {
+      display: inline-block;
+      margin: 4px 6px 4px 0;
+      padding: 5px 8px;
+      border-radius: 999px;
+      background: rgba(159, 107, 63, 0.11);
+      border: 1px solid rgba(159, 107, 63, 0.25);
+      font-family: var(--mono);
+      font-size: 12px;
+    }
+
+    .audit-list {
+      display: grid;
+      gap: 8px;
+      max-height: 420px;
+      overflow: auto;
+    }
+
+    .audit {
+      border: 1px solid var(--line);
+      background: #fffdf8;
+      border-radius: 12px;
+      padding: 10px;
+      font-size: 12px;
+    }
+
+    .audit strong { font-family: var(--mono); }
+    .muted { color: var(--muted); }
+    .small { font-size: 12px; }
+
+    .notice {
+      border-left: 4px solid var(--accent);
+      background: rgba(159, 107, 63, 0.08);
+      padding: 12px;
+      border-radius: 12px;
+      margin-top: 12px;
+    }
+
+    .notice.bad { border-left-color: var(--bad); background: rgba(155, 44, 44, 0.08); }
+    .notice.good { border-left-color: var(--good); background: rgba(31, 122, 77, 0.08); }
+
+    label { display: block; font-weight: 700; margin-bottom: 6px; }
+    input, textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px;
+      font: 14px var(--sans);
+      background: #fffdf8;
+      color: var(--ink);
+    }
+
+    textarea { min-height: 76px; resize: vertical; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Safe Intake Clickable Prototype</h1>
+    <p class="subhead">A local, single-file demo showing controlled document intake before AI use. Synthetic content only. No uploads, external APIs, credentials, hosted model calls, or real client data.</p>
+    <div id="statebar" class="statebar" aria-label="Workflow states"></div>
+  </header>
+
+  <main class="layout">
+    <section class="stack">
+      <div class="card" id="stageCard"></div>
+      <div class="card">
+        <h2>Document boundary</h2>
+        <div class="grid2">
+          <div>
+            <h3>Raw synthetic fixture</h3>
+            <div id="rawDoc" class="doc"></div>
+          </div>
+          <div>
+            <h3>Approved working boundary</h3>
+            <div id="workingDoc" class="doc muted">No redacted working copy has been approved yet.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="stack">
+      <div class="card">
+        <h2>Current decision</h2>
+        <div id="decisionPanel"></div>
+      </div>
+      <div class="card">
+        <h2>Audit summary</h2>
+        <p class="small muted">Events are proof of control decisions. They avoid unnecessary raw values.</p>
+        <div id="auditList" class="audit-list"></div>
+      </div>
+      <div class="card">
+        <h2>Known limitations</h2>
+        <ul class="small muted">
+          <li>This is a prototype, not a production system.</li>
+          <li>It does not prove legal compliance.</li>
+          <li>It does not test real OCR, access control, or model behaviour.</li>
+          <li>It uses a synthetic fixture only.</li>
+          <li>It demonstrates the control path, not detection accuracy.</li>
+        </ul>
+      </div>
+    </aside>
+  </main>
+
+  <script>
+    const states = [
+      "received",
+      "extracted",
+      "classified",
+      "classified_with_findings",
+      "redacted",
+      "needs_review",
+      "approved_for_ai",
+      "blocked",
+      "used_or_exported"
+    ];
+
+    const rawFixture = `ARTIST ONBOARDING FORM — SYNTHETIC DEMO ONLY
+
+Artist / Project Name:
+River Echo Demo Project
+
+Primary Contact:
+Avery Placeholder
+
+Representative / Manager:
+Morgan Example
+
+Email:
+avery.placeholder@example.test
+
+Phone:
++61 400 000 000
+
+Postal Address:
+100 Example Street, Demo Suburb, NT 0800, Australia
+
+ABN / Business Reference:
+00 000 000 000
+
+Payment Term:
+Invoice payable within 14 days of approved milestone delivery.
+
+Banking Note:
+Payment details to be confirmed through secure approved channel. Do not process from this form.
+
+Private Note:
+Artist has requested that unreleased project details are not shared outside the review team.
+
+Signature Placeholder:
+/s/ Avery Placeholder
+
+Date:
+01 January 2026`;
+
+    const redactedFixture = `ARTIST ONBOARDING FORM — SYNTHETIC DEMO ONLY
+
+Artist / Project Name:
+[PROJECT_NAME]
+
+Primary Contact:
+[PERSON_NAME]
+
+Representative / Manager:
+[PERSON_NAME]
+
+Email:
+[EMAIL]
+
+Phone:
+[PHONE]
+
+Postal Address:
+[ADDRESS]
+
+ABN / Business Reference:
+[BUSINESS_REFERENCE]
+
+Payment Term:
+[PAYMENT_TERM]
+
+Banking Note:
+[PAYMENT_NOTE]
+
+Private Note:
+[PRIVATE_NOTE]
+
+Signature Placeholder:
+[SIGNATURE]
+
+Date:
+[DATE]`;
+
+    const findings = [
+      "[PROJECT_NAME]",
+      "[PERSON_NAME]",
+      "[EMAIL]",
+      "[PHONE]",
+      "[ADDRESS]",
+      "[BUSINESS_REFERENCE]",
+      "[PAYMENT_TERM]",
+      "[PAYMENT_NOTE]",
+      "[PRIVATE_NOTE]",
+      "[SIGNATURE]",
+      "[DATE]"
+    ];
+
+    const model = {
+      state: "received",
+      approvalReason: "Synthetic fixture reviewed. Redacted working copy may be used for demo summary.",
+      reviewer: "Internal LAB reviewer",
+      documentId: "doc_synth_artist_onboarding_001",
+      redactedCopyId: null,
+      safeSummary: null,
+      audit: []
+    };
+
+    function nowStamp() {
+      return new Date().toISOString();
+    }
+
+    function addAudit(action, previousState, newState, reason, evidenceRef) {
+      model.audit.unshift({
+        event_id: `evt_${String(model.audit.length + 1).padStart(3, "0")}`,
+        timestamp: nowStamp(),
+        actor: "prototype_user_or_system",
+        item_id: model.redactedCopyId || model.documentId,
+        action,
+        previous_state: previousState,
+        new_state: newState,
+        reason,
+        evidence_ref: evidenceRef
+      });
+    }
+
+    function transition(newState, action, reason, evidenceRef) {
+      const oldState = model.state;
+      model.state = newState;
+      addAudit(action, oldState, newState, reason, evidenceRef);
+      render();
+    }
+
+    function block(action, reason) {
+      addAudit(action, model.state, model.state, reason, "blocked_action_log");
+      render(`Blocked: ${reason}`);
+    }
+
+    function extractText() {
+      transition("extracted", "text_extracted", "Synthetic fixture text parsed locally.", "raw_fixture_preview");
+    }
+
+    function classifySensitivity() {
+      transition("classified", "sensitivity_classified", "Contains personal, business-reference, payment-process, and private project information.", "classification_panel");
+    }
+
+    function detectCategories() {
+      transition("classified_with_findings", "categories_detected", "Expected synthetic fixture categories detected.", "findings_panel");
+    }
+
+    function createRedactedCopy() {
+      model.redactedCopyId = "redacted_copy_001";
+      transition("redacted", "redacted_copy_created", "Raw values replaced with category labels.", "redacted_copy_preview");
+    }
+
+    function sendToReview() {
+      transition("needs_review", "human_review_requested", "Reviewer decision required before AI use.", "review_panel");
+    }
+
+    function approveForAI() {
+      if (!model.approvalReason.trim()) {
+        block("approval_attempt_without_reason", "Reviewer decision reason required.");
+        return;
+      }
+      transition("approved_for_ai", "approval_granted", model.approvalReason.trim(), "approval_record");
+    }
+
+    function requestChanges() {
+      transition("redacted", "changes_requested", "Reviewer requested redaction changes before approval.", "review_record");
+    }
+
+    function blockUse() {
+      transition("blocked", "content_blocked", "Reviewer blocked downstream AI use for this item.", "review_record");
+    }
+
+    function safeSummary() {
+      if (model.state !== "approved_for_ai") {
+        block("safe_summary_attempt", "only approved redacted content can enter the AI workflow.");
+        return;
+      }
+      model.safeSummary = "This synthetic artist onboarding form contains contact, address, business-reference, payment-process, and private project fields. Sensitive values were replaced with category labels before approval.";
+      transition("used_or_exported", "safe_summary_generated", "Summary generated from approved redacted copy only.", "safe_summary_panel");
+    }
+
+    function exportAudit() {
+      if (model.state !== "approved_for_ai" && model.state !== "used_or_exported" && model.state !== "blocked") {
+        block("audit_export_attempt", "only reviewed items can export an audit summary in this demo.");
+        return;
+      }
+      transition("used_or_exported", "audit_summary_exported", "Audit summary made visible in prototype.", "audit_summary_panel");
+    }
+
+    function tryRawSummary() {
+      if (model.state === "approved_for_ai") {
+        block("raw_summary_attempt_after_approval", "raw source is still not the approved boundary; use redacted copy only.");
+      } else {
+        block("raw_summary_attempt_before_approval", "only approved redacted content can enter the AI workflow.");
+      }
+    }
+
+    function queryBeforeApproval() {
+      block("query_before_approval_attempt", "only approved redacted content can enter the AI workflow.");
+    }
+
+    function exportBeforeApproval() {
+      block("export_before_approval_attempt", "only approved redacted content can enter the AI workflow.");
+    }
+
+    function resetDemo() {
+      model.state = "received";
+      model.redactedCopyId = null;
+      model.safeSummary = null;
+      model.audit = [];
+      model.approvalReason = "Synthetic fixture reviewed. Redacted working copy may be used for demo summary.";
+      addAudit("document_received", "none", "received", "Synthetic artist onboarding fixture loaded locally.", "synthetic_fixture");
+      render();
+    }
+
+    function stateIndex(state) {
+      return states.indexOf(state);
+    }
+
+    function renderStatebar() {
+      const current = stateIndex(model.state);
+      document.getElementById("statebar").innerHTML = states.map((state, index) => {
+        const cls = state === model.state ? "active" : index < current && model.state !== "blocked" ? "done" : "";
+        return `<span class="pill ${cls}">${state}</span>`;
+      }).join("");
+    }
+
+    function renderStage(message = "") {
+      const card = document.getElementById("stageCard");
+      const statusClass = model.state === "approved_for_ai" ? "good" : model.state === "blocked" ? "bad" : model.state === "needs_review" ? "warn" : "";
+      const messageHtml = message ? `<div class="notice bad"><strong>${escapeHtml(message)}</strong></div>` : "";
+      let inner = `<span class="status ${statusClass}">${model.state}</span>${messageHtml}`;
+
+      if (model.state === "received") {
+        inner += `
+          <h2>1. Document received</h2>
+          <p>A synthetic artist onboarding form has entered the local demo workflow. This is the raw source boundary and is not approved for AI use.</p>
+          <div class="buttons">
+            <button onclick="extractText()">Extract text</button>
+            <button class="danger" onclick="tryRawSummary()">Try summarise raw document</button>
+          </div>`;
+      }
+
+      if (model.state === "extracted") {
+        inner += `
+          <h2>2. Text extracted</h2>
+          <p>Visible text and simple metadata were extracted from the synthetic fixture.</p>
+          <div class="notice"><strong>Metadata:</strong> method=fixture text parse; length=${rawFixture.length} characters; source=synthetic fixture.</div>
+          <div class="buttons">
+            <button onclick="classifySensitivity()">Classify sensitivity</button>
+            <button class="danger" onclick="tryRawSummary()">Try summarise raw document</button>
+          </div>`;
+      }
+
+      if (model.state === "classified") {
+        inner += `
+          <h2>3. Sensitivity classified</h2>
+          <p>The fixture is classified as containing personal, business-reference, payment-process, and private project information.</p>
+          <div class="notice"><strong>Recommended state:</strong> needs_review before downstream AI use.</div>
+          <div class="buttons">
+            <button onclick="detectCategories()">Detect sensitive categories</button>
+            <button class="danger" onclick="tryRawSummary()">Try summarise raw document</button>
+          </div>`;
+      }
+
+      if (model.state === "classified_with_findings") {
+        inner += `
+          <h2>4. Sensitive categories detected</h2>
+          <p>Detected categories are shown as labels. The audit view should not repeat unnecessary raw values.</p>
+          <div>${findings.map(f => `<span class="finding">${f}</span>`).join("")}</div>
+          <div class="buttons">
+            <button onclick="createRedactedCopy()">Create redacted copy</button>
+            <button class="danger" onclick="tryRawSummary()">Try summarise raw document</button>
+          </div>`;
+      }
+
+      if (model.state === "redacted") {
+        inner += `
+          <h2>5. Redacted working copy</h2>
+          <p>A separate redacted copy has been created. It is not approved yet.</p>
+          <div class="notice"><strong>Redacted copy ID:</strong> ${model.redactedCopyId}</div>
+          <div class="buttons">
+            <button onclick="sendToReview()">Send to review</button>
+            <button class="danger" onclick="tryRawSummary()">Try summarise raw document</button>
+          </div>`;
+      }
+
+      if (model.state === "needs_review") {
+        inner += `
+          <h2>6. Human review required</h2>
+          <p>The reviewer must approve, request changes, or block. Downstream AI use remains blocked until approval.</p>
+          <label for="reason">Reviewer decision reason</label>
+          <textarea id="reason" oninput="model.approvalReason = this.value">${escapeHtml(model.approvalReason)}</textarea>
+          <div class="buttons">
+            <button onclick="approveForAI()">Approve for AI</button>
+            <button class="secondary" onclick="requestChanges()">Request changes</button>
+            <button class="danger" onclick="blockUse()">Block</button>
+            <button class="ghost" onclick="queryBeforeApproval()">Query before approval</button>
+            <button class="ghost" onclick="exportBeforeApproval()">Export before approval</button>
+          </div>`;
+      }
+
+      if (model.state === "approved_for_ai") {
+        inner += `
+          <h2>7A. Approved for AI</h2>
+          <p>Only the approved redacted copy may be used. The raw source remains outside the approved boundary.</p>
+          <div class="notice good"><strong>Approved boundary:</strong> ${model.redactedCopyId}</div>
+          <div class="buttons">
+            <button onclick="safeSummary()">Generate safe summary</button>
+            <button class="secondary" onclick="exportAudit()">Export audit summary</button>
+            <button class="danger" onclick="tryRawSummary()">Try raw source anyway</button>
+          </div>`;
+      }
+
+      if (model.state === "blocked") {
+        inner += `
+          <h2>7B. Blocked</h2>
+          <p>The reviewer blocked downstream AI use. The next action is to revise redaction or keep the item out of AI workflows.</p>
+          <div class="buttons">
+            <button class="secondary" onclick="exportAudit()">View audit summary</button>
+            <button class="ghost" onclick="resetDemo()">Reset demo</button>
+          </div>`;
+      }
+
+      if (model.state === "used_or_exported") {
+        inner += `
+          <h2>8. Audit summary / approved use</h2>
+          <p>The demo has produced either a safe summary, an audit summary, or both.</p>
+          ${model.safeSummary ? `<div class="notice good"><strong>Safe summary:</strong> ${escapeHtml(model.safeSummary)}</div>` : ""}
+          <div class="buttons">
+            <button class="ghost" onclick="resetDemo()">Reset demo</button>
+          </div>`;
+      }
+
+      card.innerHTML = inner;
+    }
+
+    function renderDecisionPanel() {
+      const approvedBoundary = model.state === "approved_for_ai" || model.state === "used_or_exported" ? model.redactedCopyId : "none";
+      document.getElementById("decisionPanel").innerHTML = `
+        <p><strong>Current state:</strong> <code>${model.state}</code></p>
+        <p><strong>Document ID:</strong> <code>${model.documentId}</code></p>
+        <p><strong>Redacted copy ID:</strong> <code>${model.redactedCopyId || "not created"}</code></p>
+        <p><strong>Approved boundary:</strong> <code>${approvedBoundary}</code></p>
+        <div class="notice ${approvedBoundary === "none" ? "bad" : "good"}">
+          ${approvedBoundary === "none" ? "Downstream AI use is blocked." : "Approved redacted content may be used for the safe summary path."}
+        </div>
+        <div class="buttons"><button class="ghost" onclick="resetDemo()">Reset demo</button></div>
+      `;
+    }
+
+    function renderDocuments() {
+      document.getElementById("rawDoc").textContent = rawFixture;
+      if (model.redactedCopyId) {
+        document.getElementById("workingDoc").textContent = redactedFixture;
+        document.getElementById("workingDoc").classList.remove("muted");
+      } else {
+        document.getElementById("workingDoc").textContent = "No redacted working copy has been approved yet.";
+        document.getElementById("workingDoc").classList.add("muted");
+      }
+    }
+
+    function renderAudit() {
+      const auditList = document.getElementById("auditList");
+      if (!model.audit.length) {
+        auditList.innerHTML = `<p class="muted small">No audit events yet.</p>`;
+        return;
+      }
+      auditList.innerHTML = model.audit.map(event => `
+        <div class="audit">
+          <strong>${event.event_id}</strong> · ${escapeHtml(event.action)}<br />
+          <span class="muted">${escapeHtml(event.previous_state)} → ${escapeHtml(event.new_state)}</span><br />
+          reason: ${escapeHtml(event.reason)}<br />
+          evidence: <code>${escapeHtml(event.evidence_ref)}</code><br />
+          <span class="muted">${escapeHtml(event.timestamp)}</span>
+        </div>
+      `).join("");
+    }
+
+    function render(message = "") {
+      renderStatebar();
+      renderStage(message);
+      renderDecisionPanel();
+      renderDocuments();
+      renderAudit();
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    resetDemo();
+  </script>
+</body>
+</html>
