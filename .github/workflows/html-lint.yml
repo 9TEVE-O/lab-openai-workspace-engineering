@@ -1,0 +1,20 @@
+name: HTML lint
+
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+jobs:
+  htmlhint:
+    name: HTML lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run htmlhint
+        run: npx --yes htmlhint "demos/**/*.html"
