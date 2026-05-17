@@ -1,0 +1,16 @@
+config:
+  # Documentation-heavy repo: allow long tables, long evidence lines,
+  # repeated H1-style report sections, bare synthetic fixture values,
+  # and emphasis used as status labels.
+  MD013: false
+  MD025: false
+  MD033: false
+  MD034: false
+  MD036: false
+  MD041: false
+
+ignores:
+  - node_modules/**
+  - dist/**
+  - build/**
+  - coverage/**
