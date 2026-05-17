@@ -1,0 +1,45 @@
+name: Lightweight security checks
+
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+jobs:
+  repository-hygiene:
+    name: Repository hygiene checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check required security files
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f SECURITY.md
+          test -f .gitignore
+          test -f DEMO-LIMITATIONS.md
+          test -f docs/security/secret-handling.md
+          test -f docs/security/review-gates.md
+
+      - name: Check no common local secret files are committed
+        shell: bash
+        run: |
+          set -euo pipefail
+          forbidden='(^|/)(\.env|\.env\..*|.*\.secret|.*\.key|.*\.pem)$'
+          if git ls-files | grep -E "$forbidden"; then
+            echo "Forbidden secret-like file committed."
+            exit 1
+          fi
+
+      - name: Check Safe Intake demo disclaimer text
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q "Synthetic content only" demos/safe-intake-clickable-prototype.html
+          grep -q "not a production system" demos/safe-intake-clickable-prototype.html
+          grep -q "does not prove legal compliance" demos/safe-intake-clickable-prototype.html
