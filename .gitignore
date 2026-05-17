@@ -1,0 +1,35 @@
+# Secrets and local environment
+.env
+.env.*
+*.secret
+*.key
+*.pem
+*.p12
+*.pfx
+
+# Logs and local runtime files
+*.log
+*.local
+*.tmp
+*.bak
+
+# Dependencies and build outputs
+node_modules/
+dist/
+build/
+coverage/
+
+# Test and browser automation artefacts
+playwright-report/
+test-results/
+screenshots/
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Generated exports
+exports/
+reports/generated/
