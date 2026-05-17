@@ -2,36 +2,81 @@
 
 ## Purpose
 
-Audit a workflow step by step for accuracy, completeness, risks, gaps, and alignment with the intended outcome.
+Review a workflow step by step so it can become clearer, more complete, and easier to reuse.
 
-## Use this skill when
+## Trigger phrases / when to use
 
-- A process needs quality checking
-- A workflow must become repeatable
-- A tool recommendation process must become controlled assessment
-- A client-facing workflow needs evidence and review gates
+Use this skill when the user asks for:
 
-## Audit steps
+- a workflow review
+- a quality check
+- a process audit
+- a repeatable checklist
+- gaps or improvements
 
-1. Define intended outcome
-2. List workflow stages
-3. Check each step for purpose and dependency
-4. Identify missing inputs, outputs, roles, and decisions
-5. Identify risks and failure modes
-6. Check whether review gates are required
-7. Check whether evidence is preserved
-8. Recommend refinements
+## Inputs required
 
-## Required sections
+Ask for or infer:
 
-- Intended outcome
-- Step-by-step assessment
-- Risks and gaps
-- Missing evidence
-- Human review requirements
-- Practical refinements
-- Final judgement
+- intended outcome
+- workflow steps
+- inputs
+- outputs
+- reviewer or owner
+- required evidence
+- next decision
+
+## Workflow
+
+1. State the intended outcome.
+2. List the workflow stages.
+3. Check each stage for input, action, output, and owner.
+4. Note missing steps or unclear decisions.
+5. Note review points.
+6. Note evidence that should be kept.
+7. Recommend refinements.
+8. Give a readiness judgement.
 
 ## Output contract
 
-Return a professional audit with clear recommendations and no vague praise.
+Return:
+
+- intended outcome
+- workflow summary
+- step-by-step assessment
+- gaps found
+- evidence needed
+- review points
+- refinements
+- readiness judgement
+- next action
+
+## Safety rules
+
+- Do not claim a workflow is ready when major steps are missing.
+- Do not hide uncertainty.
+- Do not replace human review where the workflow requires it.
+- Keep recommendations tied to the stated outcome.
+
+## Failure modes
+
+- Reviewing only the idea, not the steps.
+- Missing unclear ownership.
+- Missing evidence needs.
+- Giving vague praise instead of useful refinements.
+
+## Example request
+
+Review this workflow and tell me what needs fixing.
+
+## Example output
+
+Intended outcome: make the workflow repeatable.
+Workflow summary: receive input, process it, review it, record the decision.
+Step-by-step assessment: the sequence is clear, but the review owner is not named.
+Gaps found: no pass/fail criteria.
+Evidence needed: decision record and review notes.
+Review points: final output needs human review.
+Refinements: add owner, criteria, and evidence log.
+Readiness judgement: useful draft, not final.
+Next action: convert into a checklist.
