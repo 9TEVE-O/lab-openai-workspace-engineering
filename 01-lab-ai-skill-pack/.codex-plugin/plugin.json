@@ -1,0 +1,14 @@
+{
+  "name": "lab-ai-skill-pack",
+  "version": "0.1.0",
+  "description": "LAB AI reusable skills for Safe Intake, workflow audit, tool security review, app submission readiness, and client-facing proof packs.",
+  "author": "LAB AI & Tech Solutions",
+  "skills": [
+    "router",
+    "safe-intake",
+    "app-submission",
+    "workflow-audit",
+    "tool-hint-security-review",
+    "client-facing-proof-pack"
+  ]
+}
