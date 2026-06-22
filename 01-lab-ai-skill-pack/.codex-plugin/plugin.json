@@ -1,6 +1,6 @@
 {
   "name": "lab-ai-skill-pack",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "LAB AI reusable skills for Safe Intake, workflow audit, tool review, app submission readiness, credential gates, app building, agent evaluation, troubleshooting, and client-facing proof packs.",
   "author": "LAB AI & Tech Solutions",
   "skills": [
@@ -13,6 +13,7 @@
     "credential-gate",
     "chatgpt-app-builder",
     "agent-eval",
-    "api-troubleshooting-router"
+    "api-troubleshooting-router",
+    "system-zero-security"
   ]
 }
