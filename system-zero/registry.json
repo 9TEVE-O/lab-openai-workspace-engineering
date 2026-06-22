@@ -1,0 +1,98 @@
+{
+  "name": "system-zero-skill-registry",
+  "version": "1.0.0",
+  "description": "Versioned governance manifest for System Zero's model-routing skill pack. Each skill entry defines its tier, default model, token budget, rollback threshold, and evidence requirements. Bump the version on any skill patch after human approval.",
+  "last_updated": "2026-06-23",
+  "token_economy": {
+    "daily_budget_warning_threshold": 0.70,
+    "daily_budget_hard_cap_threshold": 0.90,
+    "cascade_failure_policy": "ESCALATE_TO_HUMAN — never silently downgrade tier for T0 security domains",
+    "retry_budget_per_task": 2,
+    "retry_span_required": true
+  },
+  "tier_defaults": {
+    "T0": {
+      "models": ["claude_opus_4_8", "gpt_5_5"],
+      "token_budget_in": 8192,
+      "token_budget_out": 4096,
+      "cost_weight": 1.0
+    },
+    "T1": {
+      "models": ["claude_sonnet_4_6", "gpt_5_4"],
+      "token_budget_in": 4096,
+      "token_budget_out": 2048,
+      "cost_weight": 0.3
+    },
+    "T2": {
+      "models": ["gemini_3_flash", "gpt_5_4_mini"],
+      "token_budget_in": 1024,
+      "token_budget_out": 512,
+      "cost_weight": 0.05
+    },
+    "T3": {
+      "models": ["huggingface_local"],
+      "token_budget_in": 512,
+      "token_budget_out": 256,
+      "cost_weight": 0.0
+    }
+  },
+  "skills": [
+    {
+      "id": "system-zero-security",
+      "version": "1.0.0",
+      "tier": 0,
+      "model_default": "claude_opus_4_8",
+      "model_fallback": "gpt_5_5",
+      "token_budget_in": 8192,
+      "token_budget_out": 4096,
+      "rollback_threshold": 0.70,
+      "cascade_failure_policy": "ESCALATE_TO_HUMAN",
+      "domains": ["auth", "authz", "rbac", "multi-tenant", "secrets", "mcp-annotations", "agentic-permissions"],
+      "skill_file": "01-lab-ai-skill-pack/skills/system-zero-security/SKILL.md",
+      "upstream_skills": ["tool-hint-security-review"],
+      "downstream_skills": ["safe-intake", "agent-eval"],
+      "otlp_span_required": true,
+      "human_review_on_confidence_below": 0.70,
+      "status": "active",
+      "last_updated": "2026-06-23",
+      "changelog": [
+        {
+          "version": "1.0.0",
+          "date": "2026-06-23",
+          "author": "System Zero — Day 1",
+          "note": "Initial skill wire-up. T0 routing contract, Evidence Layer span schema, skill feedback loop, and relationships to existing LAB AI skill pack documented."
+        }
+      ]
+    }
+  ],
+  "planned_skills": [
+    {
+      "id": "system-zero-architecture",
+      "tier": 0,
+      "domains": ["component-design", "api-contracts", "dependency-graph", "scalability"],
+      "status": "planned",
+      "target_version": "1.1.0"
+    },
+    {
+      "id": "system-zero-feature-logic",
+      "tier": 1,
+      "domains": ["feature-flags", "xstate-transitions", "zod-schemas", "api-contracts"],
+      "status": "planned",
+      "target_version": "1.2.0"
+    },
+    {
+      "id": "system-zero-style-tokens",
+      "tier": 2,
+      "domains": ["style-dictionary", "design-tokens", "typescript-style", "docs"],
+      "status": "planned",
+      "target_version": "1.3.0"
+    },
+    {
+      "id": "system-zero-classifier",
+      "tier": 3,
+      "domains": ["intent-tagging", "domain-classification", "embedding-routing"],
+      "status": "planned",
+      "target_version": "1.4.0"
+    }
+  ]
+}
