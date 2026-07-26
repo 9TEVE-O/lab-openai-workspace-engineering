@@ -17,7 +17,7 @@ const expectedTitles = vault.prompts.map((p) => p.title);
 const profileDir = path.join(outputDir, 'isolated-browser-profile');
 
 const report = {
-  schema_version: '0.2',
+  schema_version: '0.3',
   target: 'https://appliedaihub.org/tools/prompt-vault/',
   isolated_profile: true,
   vault_file: path.basename(vaultFile),
@@ -27,6 +27,7 @@ const report = {
   verified: false,
   page_url: null,
   navigation_warning: null,
+  challenge_detected: false,
   visible_buttons: [],
   visible_links: [],
   indexeddb: [],
@@ -36,9 +37,17 @@ const report = {
 let context;
 try {
   context = await chromium.launchPersistentContext(profileDir, {
-    headless: true,
+    headless: false,
     viewport: { width: 1440, height: 1000 },
+    screen: { width: 1440, height: 1000 },
+    locale: 'en-AU',
+    timezoneId: 'Australia/Adelaide',
+    userAgent: 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36',
     acceptDownloads: true,
+    args: ['--disable-blink-features=AutomationControlled'],
+  });
+  await context.addInitScript(() => {
+    Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
   });
   let page = context.pages()[0] || await context.newPage();
   page.on('dialog', async (dialog) => {
@@ -51,7 +60,16 @@ try {
     report.navigation_warning = error instanceof Error ? error.message : String(error);
     if (!(await page.locator('body').count())) throw error;
   }
-  await page.waitForTimeout(5000);
+
+  for (let attempt = 0; attempt < 18; attempt++) {
+    await page.waitForTimeout(2500);
+    const title = await page.title().catch(() => '');
+    const body = await page.locator('body').innerText().catch(() => '');
+    const challenged = /just a moment|verifying you are human|performing security verification|cloudflare/i.test(`${title}\n${body}`);
+    report.challenge_detected ||= challenged;
+    if (!challenged && /prompt vault/i.test(`${title}\n${body}`)) break;
+  }
+
   report.page_url = page.url();
   await page.screenshot({ path: path.join(outputDir, '01-before-import.png'), fullPage: true });
 
@@ -69,6 +87,11 @@ try {
     })).slice(0, 150));
   };
   await collectUi(page);
+
+  const currentBody = await page.locator('body').innerText().catch(() => '');
+  if (/cloudflare|verifying you are human|performing security verification/i.test(currentBody)) {
+    throw new Error('Cloudflare challenge prevented access to the Prompt Vault interface');
+  }
 
   const initialPageCount = context.pages().length;
   const launchCandidate = page.getByText(/start organizing now|open prompt vault|launch prompt vault|open vault/i).first();
