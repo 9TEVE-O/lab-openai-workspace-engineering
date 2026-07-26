@@ -32,7 +32,7 @@ jobs:
           npx playwright install --with-deps chromium
       - name: Import and verify v3 in isolated browser profile
         run: |
-          node eval/verify_prompt_vault.mjs \
+          xvfb-run -a node eval/verify_prompt_vault.mjs \
             --vault eval/prompts_evidence_bound_v3.json \
             --output-dir results/prompt-vault
       - name: Upload Prompt Vault evidence
