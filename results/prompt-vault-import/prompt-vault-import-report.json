@@ -1,0 +1,19 @@
+{
+  "schema_version": "0.1",
+  "target": "https://appliedaihub.org/tools/prompt-vault/",
+  "isolated_profile": true,
+  "vault_file": "prompts_evidence_bound_v3.json",
+  "vault_title_expected": "AI Top Advisor Pack — Evidence-Bound Decision Support",
+  "prompt_titles_expected": [
+    "The World-Class Advisor Blueprint",
+    "The Second Brain Career Accelerator",
+    "The Wealth Architecture Strategist"
+  ],
+  "imported": false,
+  "verified": false,
+  "page_url": null,
+  "visible_buttons": [],
+  "visible_links": [],
+  "indexeddb": [],
+  "error": "page.goto: Timeout 120000ms exceeded.\nCall log:\n  - navigating to \"https://appliedaihub.org/tools/prompt-vault/\", waiting until \"networkidle\"\n\n    at /home/runner/work/lab-openai-workspace-engineering/lab-openai-workspace-engineering/eval/verify_prompt_vault.mjs:47:14"
+}

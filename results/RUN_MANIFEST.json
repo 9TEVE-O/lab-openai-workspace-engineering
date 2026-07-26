@@ -1,0 +1,396 @@
+{
+  "schema_version": "0.1",
+  "github_run_id": "30200725473",
+  "github_run_attempt": "1",
+  "source_head_sha": "25995a79a98ad20b7eebacab96cf97849bc6d1a9",
+  "pull_request_number": "30",
+  "prompt_vault_job_result": "failure",
+  "model_matrix_result": "success",
+  "files": [
+    {
+      "path": "collected/model-qwen2-5-0-5b-instruct-q4-k-m/qwen-qwen2-5-0-5b-instruct-gguf-q4-k-m.json",
+      "size_bytes": 62231,
+      "sha256": "b14222b184a43e5dfdfb71ac46c0b62b8f4cad27ba1299e8592ab1e19ef24019"
+    },
+    {
+      "path": "collected/model-qwen2-5-0-5b-instruct-q4-k-m/qwen-qwen2-5-0-5b-instruct-gguf-q4-k-m.md",
+      "size_bytes": 58922,
+      "sha256": "1c53011080d66fa812b5e7c8c28d2ede5237baa0c72ca3ce060423754a2ff25c"
+    },
+    {
+      "path": "collected/model-smollm2-1-7b-instruct-q4-k-m/bartowski-smollm2-1-7b-instruct-gguf-q4-k-m.json",
+      "size_bytes": 50246,
+      "sha256": "8663dd4b75544228d2edb700de9a3a3a970aa5a323310ed8927f735186f8b800"
+    },
+    {
+      "path": "collected/model-smollm2-1-7b-instruct-q4-k-m/bartowski-smollm2-1-7b-instruct-gguf-q4-k-m.md",
+      "size_bytes": 46930,
+      "sha256": "2ba727fe0371c7c343b074bdaf2034d7922cd736fb01eeb51a419ecb6fa898ac"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/Cache/Cache_Data/7b247a48eb4c36a4_0",
+      "size_bytes": 21095,
+      "sha256": "395dac2435630ec9c59318b7c99dda809e18d1a6d6785f3b94569df4829e839e"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/Cache/Cache_Data/83359f02c0751941_0",
+      "size_bytes": 29486,
+      "sha256": "66ed5b575f066f7ea03ec886f561749b7330549f87e10e03f97546f2a58f11f4"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/Cache/Cache_Data/a270e8ccbd84d484_0",
+      "size_bytes": 7988,
+      "sha256": "6ba4e51e4390e0168cf7a2d01f4736e862146d4338b5be345f15827a966a26b1"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/Cache/Cache_Data/c2a88e964d31ca8b_0",
+      "size_bytes": 6810,
+      "sha256": "680dbcf2423e51a67cd006e1b740f0277a942a9034e48fc8b70c87f4ebc05e74"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/Cache/Cache_Data/index",
+      "size_bytes": 24,
+      "sha256": "fbcfe23a2ecb82b7100c50811691dde0a33aa3da8d176be9882a9db485dc0f2d"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/Cache/Cache_Data/index-dir/the-real-index",
+      "size_bytes": 144,
+      "sha256": "b5147aa34337473b9f9930e7e4c1825fa22328b9c1124d8b755815137c75dcf0"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/Code Cache/js/5d2a00d04008413b_0",
+      "size_bytes": 2607,
+      "sha256": "808709460729bfc882c257f6dc560d239b0a0edfcece5fcb81fab4454b31e2a4"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/Code Cache/js/92fb79be5f8575f2_0",
+      "size_bytes": 765,
+      "sha256": "5690e1c95f32c559f485ffde03d5054a4052c628bdbbdf8c5e5b3d4005c94672"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/Code Cache/js/index",
+      "size_bytes": 24,
+      "sha256": "fbcfe23a2ecb82b7100c50811691dde0a33aa3da8d176be9882a9db485dc0f2d"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/Code Cache/js/index-dir/the-real-index",
+      "size_bytes": 96,
+      "sha256": "6c8f6bae575e6b1c7303bb57d2dae90d66995fb6f8daee018c68b74c5d948551"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/Code Cache/wasm/index",
+      "size_bytes": 24,
+      "sha256": "fbcfe23a2ecb82b7100c50811691dde0a33aa3da8d176be9882a9db485dc0f2d"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/Code Cache/wasm/index-dir/the-real-index",
+      "size_bytes": 48,
+      "sha256": "ea1a4d9bd8d63a0bbca102fb6736875f6cb524d403ded4638cee94dbbb738802"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/Cookies",
+      "size_bytes": 20480,
+      "sha256": "2ade7ad8f15eccb025798893f007bc3a04679504411bbad75e4d1f35cf47a65e"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/Cookies-journal",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/DIPS",
+      "size_bytes": 36864,
+      "sha256": "9cc25f722086b3c817ef65f5b647153848d40f5d2b078f2db61ebc8332652109"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/DawnGraphiteCache/data_0",
+      "size_bytes": 8192,
+      "sha256": "d6a5fe39cd672781b256e0e3102f7022635f1d4bb7cfcc90a80fffe4d0f3877e"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/DawnGraphiteCache/data_1",
+      "size_bytes": 270336,
+      "sha256": "b927d26ed5eb8ea06706a718fb59c3559347d4ca6065fb249cd1d5bb94d7202a"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/DawnGraphiteCache/data_2",
+      "size_bytes": 8192,
+      "sha256": "ec1702806f4cc7c42a82fc2b38e89835fde7c64bb32060e0823c9077ca92efb7"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/DawnGraphiteCache/data_3",
+      "size_bytes": 8192,
+      "sha256": "e09f42c398d688dce168570291f1f92d079987deda3099a34adb9e8c0522b30c"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/DawnGraphiteCache/index",
+      "size_bytes": 262512,
+      "sha256": "664237d8875ca33300fac16f91f299c8d6923d7a934d0bb73fb4db87f78c151f"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/DawnWebGPUCache/data_0",
+      "size_bytes": 8192,
+      "sha256": "d6a5fe39cd672781b256e0e3102f7022635f1d4bb7cfcc90a80fffe4d0f3877e"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/DawnWebGPUCache/data_1",
+      "size_bytes": 270336,
+      "sha256": "c91014fbb467af4b350f2b8003535db9ea7bfe5ed4a52735d56d4033d53a0eb9"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/DawnWebGPUCache/data_2",
+      "size_bytes": 8192,
+      "sha256": "ec1702806f4cc7c42a82fc2b38e89835fde7c64bb32060e0823c9077ca92efb7"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/DawnWebGPUCache/data_3",
+      "size_bytes": 8192,
+      "sha256": "e09f42c398d688dce168570291f1f92d079987deda3099a34adb9e8c0522b30c"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/DawnWebGPUCache/index",
+      "size_bytes": 262512,
+      "sha256": "c55bed3fed7744f1396b7c157afc1e229eb6b9a60677ee914fd0985646c68018"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/File System/000/t/00/00000000",
+      "size_bytes": 1,
+      "sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/File System/000/t/Paths/000003.log",
+      "size_bytes": 277,
+      "sha256": "ada9b74ac2b7165c2ac73e465d45b75ff6082af4fdf5b1ee0efac79c62ba97b8"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/File System/000/t/Paths/CURRENT",
+      "size_bytes": 16,
+      "sha256": "0f1bad70c7bd1e0a69562853ec529355462fcd0423263a3d39d6d0d70b780443"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/File System/000/t/Paths/LOCK",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/File System/000/t/Paths/LOG",
+      "size_bytes": 447,
+      "sha256": "0be8a8a6165c6bd37069f905168c291781897b49fa918a570fe35aa5d8f69375"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/File System/000/t/Paths/MANIFEST-000001",
+      "size_bytes": 41,
+      "sha256": "f9d31b278e215eb0d0e9cd709edfa037e828f36214ab7906f612160fead4b2b4"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/File System/Origins/000003.log",
+      "size_bytes": 113,
+      "sha256": "569b08b58662f72385eab9660256445d41382b8644b10615d79498f8f8f4b382"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/File System/Origins/CURRENT",
+      "size_bytes": 16,
+      "sha256": "0f1bad70c7bd1e0a69562853ec529355462fcd0423263a3d39d6d0d70b780443"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/File System/Origins/LOCK",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/File System/Origins/LOG",
+      "size_bytes": 439,
+      "sha256": "db8e32c3759a718c1256ed1a4a45afec8c048d49bf497d6c27d6666dcb0f3e12"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/File System/Origins/MANIFEST-000001",
+      "size_bytes": 41,
+      "sha256": "f9d31b278e215eb0d0e9cd709edfa037e828f36214ab7906f612160fead4b2b4"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/GPUCache/data_0",
+      "size_bytes": 45056,
+      "sha256": "6ed2a46b999efe974e0b947a759df4fc5b9236d994fe283b5ce7c9017458cf0f"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/GPUCache/data_1",
+      "size_bytes": 270336,
+      "sha256": "c1eebf56468a374ea688f32c87c54a2cacf8831b81b0330d4a599ca2f2482532"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/GPUCache/data_2",
+      "size_bytes": 1056768,
+      "sha256": "088688e2ab7a9f3d66b125174cce0c48714e76d64d70f30983a214599449c33d"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/GPUCache/data_3",
+      "size_bytes": 8192,
+      "sha256": "e09f42c398d688dce168570291f1f92d079987deda3099a34adb9e8c0522b30c"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/GPUCache/index",
+      "size_bytes": 262512,
+      "sha256": "5f8555a06b2dc10fc80b7f94f07cf95699495b9b40ab44be02d57a38f3a7a7b8"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/Local Storage/leveldb/000003.log",
+      "size_bytes": 362,
+      "sha256": "d7b6af4fcdefae8d4d0ce0f58ba6c8c78e9a8d285ae35e0f287ce9ddf5fa699b"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/Local Storage/leveldb/CURRENT",
+      "size_bytes": 16,
+      "sha256": "0f1bad70c7bd1e0a69562853ec529355462fcd0423263a3d39d6d0d70b780443"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/Local Storage/leveldb/LOCK",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/Local Storage/leveldb/LOG",
+      "size_bytes": 443,
+      "sha256": "2eaca87e202ec995fd04542b50ceb1f6bec45948b8aa80dbc94ebcc8d07e1a5d"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/Local Storage/leveldb/MANIFEST-000001",
+      "size_bytes": 41,
+      "sha256": "f9d31b278e215eb0d0e9cd709edfa037e828f36214ab7906f612160fead4b2b4"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/PersistentOriginTrials/LOCK",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/PersistentOriginTrials/LOG",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/Session Storage/000003.log",
+      "size_bytes": 447,
+      "sha256": "7acaadb6a5835739511325bcd18e794d68546d1247e75f4407356b77d8a95237"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/Session Storage/CURRENT",
+      "size_bytes": 16,
+      "sha256": "0f1bad70c7bd1e0a69562853ec529355462fcd0423263a3d39d6d0d70b780443"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/Session Storage/LOCK",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/Session Storage/LOG",
+      "size_bytes": 431,
+      "sha256": "ea1b6f4553e4d26207676b9a5ba02b065ca9a4f49be5ba97e8cab7f0d12a70f3"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/Session Storage/MANIFEST-000001",
+      "size_bytes": 41,
+      "sha256": "f9d31b278e215eb0d0e9cd709edfa037e828f36214ab7906f612160fead4b2b4"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/Shared Dictionary/cache/index",
+      "size_bytes": 24,
+      "sha256": "fbcfe23a2ecb82b7100c50811691dde0a33aa3da8d176be9882a9db485dc0f2d"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/Shared Dictionary/cache/index-dir/the-real-index",
+      "size_bytes": 48,
+      "sha256": "781dead357eb8e711f7926a7720d2b0626f0ec6122eaa0661ee0a268685ea701"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/Shared Dictionary/db",
+      "size_bytes": 45056,
+      "sha256": "b08af7745c49533422c5afb2e683b61ab1b025a2ef13f892321a2cd1383fba79"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/Shared Dictionary/db-journal",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/SharedStorage",
+      "size_bytes": 4096,
+      "sha256": "ed043ff7b0020a443824f7bbcbbae81562d03a13a1ace3d78017fac38aea7da8"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/VideoDecodeStats/LOCK",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/VideoDecodeStats/LOG",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/WebStorage/QuotaManager",
+      "size_bytes": 40960,
+      "sha256": "fc7fc25285acc60d0ce082fa2301e86816d9948c1971243c861fd4f529b5bf6d"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/WebStorage/QuotaManager-journal",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/shared_proto_db/000003.log",
+      "size_bytes": 95,
+      "sha256": "5b149d68659ebeab90f1116b8704a32dc240fbf85171bd4a4f70d57a3d8d4bb8"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/shared_proto_db/CURRENT",
+      "size_bytes": 16,
+      "sha256": "0f1bad70c7bd1e0a69562853ec529355462fcd0423263a3d39d6d0d70b780443"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/shared_proto_db/LOCK",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/shared_proto_db/LOG",
+      "size_bytes": 431,
+      "sha256": "eb82871d44c68281938a4e58090f475e606921187c1e151384604e789d26939b"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/shared_proto_db/MANIFEST-000001",
+      "size_bytes": 41,
+      "sha256": "f9d31b278e215eb0d0e9cd709edfa037e828f36214ab7906f612160fead4b2b4"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/shared_proto_db/metadata/000003.log",
+      "size_bytes": 184,
+      "sha256": "f677dedaebada5e1a4dcc0722f8d8e2c4566df67835aa71da647ea86b571536c"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/shared_proto_db/metadata/CURRENT",
+      "size_bytes": 16,
+      "sha256": "0f1bad70c7bd1e0a69562853ec529355462fcd0423263a3d39d6d0d70b780443"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/shared_proto_db/metadata/LOCK",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/shared_proto_db/metadata/LOG",
+      "size_bytes": 449,
+      "sha256": "44260068913114dc91da070f1f1d251363e2466b81087abac6b21bd9828a3cf3"
+    },
+    {
+      "path": "collected/prompt-vault-import/isolated-browser-profile/Default/shared_proto_db/metadata/MANIFEST-000001",
+      "size_bytes": 41,
+      "sha256": "f9d31b278e215eb0d0e9cd709edfa037e828f36214ab7906f612160fead4b2b4"
+    },
+    {
+      "path": "collected/prompt-vault-import/prompt-vault-import-report.json",
+      "size_bytes": 832,
+      "sha256": "8aed32d77e056f8217c5150478ffe0d0c891fddd1d10cbcfb8862c2af77992f7"
+    }
+  ]
+}
