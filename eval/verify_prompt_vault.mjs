@@ -17,13 +17,14 @@ const expectedTitles = vault.prompts.map((p) => p.title);
 const profileDir = path.join(outputDir, 'isolated-browser-profile');
 
 const report = {
-  schema_version: '0.3',
+  schema_version: '0.4',
   target: 'https://appliedaihub.org/tools/prompt-vault/',
   isolated_profile: true,
   vault_file: path.basename(vaultFile),
   vault_title_expected: vault.vaultTitle,
   prompt_titles_expected: expectedTitles,
   imported: false,
+  import_mode: null,
   verified: false,
   page_url: null,
   navigation_warning: null,
@@ -151,7 +152,15 @@ try {
   report.imported = imported;
   if (!imported) throw new Error('No Prompt Vault import control or file input was found');
 
-  await page.waitForTimeout(6000);
+  await page.waitForTimeout(2500);
+  const overwriteOption = page.getByText(/clear and overwrite/i).first();
+  if (!(await overwriteOption.count())) {
+    throw new Error('Prompt Vault import options opened, but Clear and overwrite was not available');
+  }
+  await overwriteOption.click({ timeout: 15000 });
+  report.import_mode = 'clear_and_overwrite';
+
+  await page.waitForTimeout(7000);
   await page.screenshot({ path: path.join(outputDir, '02-after-import.png'), fullPage: true });
   report.page_url = page.url();
   await collectUi(page);
@@ -183,7 +192,7 @@ try {
 
   report.prompt_titles_missing = missingTitles;
   report.vault_title_visible = vaultTitleVisible;
-  report.verified = imported && missingTitles.length === 0;
+  report.verified = imported && report.import_mode === 'clear_and_overwrite' && missingTitles.length === 0 && vaultTitleVisible;
   if (!report.verified) throw new Error(`Import completed but UI verification failed; missing titles: ${missingTitles.join(', ')}`);
 } catch (error) {
   report.error = error instanceof Error ? error.stack || error.message : String(error);
