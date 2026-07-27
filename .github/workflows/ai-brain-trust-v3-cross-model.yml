@@ -50,7 +50,8 @@ jobs:
   model-eval:
     name: Evaluate ${{ matrix.slug }}
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    # Nine serial fixtures allow up to 1800s each, plus llama.cpp build and model download.
+    timeout-minutes: 360
     strategy:
       fail-fast: false
       matrix:
@@ -160,8 +161,11 @@ jobs:
           (root / 'RUN_MANIFEST.json').write_text(json.dumps(manifest, indent=2), encoding='utf-8')
           PY
       - name: Push evidence to isolated result branch
+        # Fork PRs receive a read-only GITHUB_TOKEN; same-repo runs can push. Include
+        # run_attempt so workflow re-runs get a unique immutable branch name.
+        if: github.event.pull_request.head.repo.full_name == github.repository
         env:
-          RESULT_BRANCH: eval-results/ai-brain-trust-v3-${{ github.run_id }}
+          RESULT_BRANCH: eval-results/ai-brain-trust-v3-${{ github.run_id }}-${{ github.run_attempt }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -170,6 +174,6 @@ jobs:
           mkdir -p results
           cp -R collected/. results/
           git add results
-          git commit -m "test: publish AI Brain Trust v3 cross-model run ${{ github.run_id }}"
+          git commit -m "test: publish AI Brain Trust v3 cross-model run ${{ github.run_id }}.${{ github.run_attempt }}"
           git push origin "HEAD:$RESULT_BRANCH"
           echo "RESULT_BRANCH=$RESULT_BRANCH"

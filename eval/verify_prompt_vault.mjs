@@ -114,7 +114,14 @@ try {
   report.page_url = page.url();
   await collectUi();
 
-  const bodyText = await page.locator('body').innerText();
+  // Import may succeed inside a child frame; collect visible text from every frame.
+  const frameTexts = [];
+  for (const frame of page.frames()) {
+    try {
+      frameTexts.push(await frame.locator('body').innerText({ timeout: 5000 }));
+    } catch {}
+  }
+  const bodyText = frameTexts.join('\n');
   const missingTitles = expectedTitles.filter((title) => !bodyText.includes(title));
   const vaultTitleVisible = !vault.vaultTitle || bodyText.includes(vault.vaultTitle);
 
@@ -141,8 +148,12 @@ try {
 
   report.prompt_titles_missing = missingTitles;
   report.vault_title_visible = vaultTitleVisible;
-  report.verified = imported && missingTitles.length === 0;
-  if (!report.verified) throw new Error(`Import completed but UI verification failed; missing titles: ${missingTitles.join(', ')}`);
+  report.verified = imported && missingTitles.length === 0 && vaultTitleVisible;
+  if (!report.verified) {
+    throw new Error(
+      `Import completed but UI verification failed; missing titles: ${missingTitles.join(', ') || '(none)'}; vault_title_visible: ${vaultTitleVisible}`,
+    );
+  }
 } catch (error) {
   report.error = error instanceof Error ? error.stack || error.message : String(error);
 } finally {
