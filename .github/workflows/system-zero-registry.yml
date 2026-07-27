@@ -1,0 +1,41 @@
+name: System Zero registry consistency
+
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+jobs:
+  validate-registry:
+    name: Validate System Zero registry
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Run registry validator
+        run: python3 scripts/validate_system_zero_registry.py
+
+      - name: Verify validator rejects a known inconsistency
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          path = Path("01-lab-ai-skill-pack/.codex-plugin/plugin.json")
+          data = json.loads(path.read_text(encoding="utf-8"))
+          data["skills"].remove("system-zero-security")
+          path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+          PY
+
+          if python3 scripts/validate_system_zero_registry.py; then
+            echo "Validator unexpectedly accepted an inconsistent plugin manifest."
+            exit 1
+          fi
+
+          echo "Validator correctly rejected the inconsistent plugin manifest."
