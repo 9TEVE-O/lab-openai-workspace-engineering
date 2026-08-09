@@ -103,10 +103,12 @@ Condition-D trigger: more than 8 production Python files or more than 500 produc
 
 ## V6 — Persistent non-functional invariant suite
 
+At checkpoint `Fi`, `/benchmark/nfi/` contains only the cumulative invariant test files whose activation point is `Fi` or earlier.
+
 Command:
 
 ```text
-python -m pytest -q -p no:cacheprovider --tb=short /benchmark/nfi/active_nfi.py
+python -m pytest -q -p no:cacheprovider --tb=short /benchmark/nfi/
 ```
 
 Timeout: 120 seconds unless a stricter committed NFI threshold applies.  
