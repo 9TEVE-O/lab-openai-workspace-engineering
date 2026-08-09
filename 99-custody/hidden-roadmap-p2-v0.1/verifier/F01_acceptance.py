@@ -117,6 +117,18 @@ def test_cli_plan_json_missing_db_and_stop_semantics(tmp_path):
     assert not db_path.exists()
 
 
+def test_plan_json_is_byte_deterministic_for_identical_state(tmp_path):
+    migrations = tmp_path / "migrations.py"
+    _write_file(migrations)
+    db_path = tmp_path / "missing.db"
+    args = ["migrate", str(db_path), str(migrations), "--plan-json"]
+    first = CliRunner().invoke(cli, args)
+    second = CliRunner().invoke(cli, args)
+    assert first.exit_code == second.exit_code == 0
+    assert first.output.encode("utf-8") == second.output.encode("utf-8")
+    assert not db_path.exists()
+
+
 def test_cli_plan_json_unknown_stop_before_errors(tmp_path):
     migrations = tmp_path / "migrations.py"
     _write_file(migrations)
