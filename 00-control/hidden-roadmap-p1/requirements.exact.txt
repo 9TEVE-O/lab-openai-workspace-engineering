@@ -1,0 +1,39 @@
+# Hidden Roadmap P1 benchmark-owned Linux/amd64 Python 3.12 environment
+# Historical runtime/dev resolution recovered from the successful R0 CI job,
+# plus explicit benchmark bootstrap/build-backend pins.
+ast-serialize==0.6.0
+black==26.5.1
+click==8.4.2
+click-default-group==1.2.4
+cogapp==3.6.0
+data-science-types==0.2.23
+flake8==7.3.0
+flake8-pyproject==1.2.4
+hypothesis==6.161.5
+iniconfig==2.3.0
+librt==0.13.0
+mccabe==0.7.0
+mypy==2.3.0
+mypy-extensions==1.1.0
+packaging==26.2
+pathspec==1.1.1
+platformdirs==4.11.0
+pluggy==1.6.0
+pycodestyle==2.14.0
+pyflakes==3.4.0
+pygments==2.20.0
+pytest==9.1.1
+python-dateutil==2.9.0.post0
+pytokens==0.4.1
+six==1.17.0
+sortedcontainers==2.4.0
+sqlite-fts4==1.0.3
+tabulate==0.10.0
+ty==0.0.63
+types-click==7.1.8
+types-pluggy==1.2.0.20240106
+types-python-dateutil==2.9.0.20260716
+types-tabulate==0.10.0.20260508
+typing_extensions==4.16.0
+pip==26.1.2
+setuptools==83.0.0
