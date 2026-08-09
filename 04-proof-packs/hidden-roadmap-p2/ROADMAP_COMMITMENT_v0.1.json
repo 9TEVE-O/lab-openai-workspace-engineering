@@ -1,0 +1,35 @@
+{
+  "feature_count": 5,
+  "feature_hashes": [
+    {
+      "byte_length": 2221,
+      "feature_id": "F01",
+      "sha256": "92361ed707a1417e917f1a54c2ae566ccd4368f56f09e2fa3bbba8af4c7ea76b"
+    },
+    {
+      "byte_length": 2131,
+      "feature_id": "F02",
+      "sha256": "9431cf318b3b497cf13d564b9e7b44d58aa531b91e409f76c510e605622e6191"
+    },
+    {
+      "byte_length": 2135,
+      "feature_id": "F03",
+      "sha256": "deae69d79c4f5730f8977c0968ec3743b6d250a52a2e72062f7cc574b16f2f55"
+    },
+    {
+      "byte_length": 1908,
+      "feature_id": "F04",
+      "sha256": "b5471b921c90bc6c5e88fdc583212437a8d5fc55a186173f238a746d0e5b5ba0"
+    },
+    {
+      "byte_length": 2781,
+      "feature_id": "F05",
+      "sha256": "eeee31ef8718d1422976be9f3b6883c27d838a6d0a11566fcf808652c899e9ae"
+    }
+  ],
+  "manifest_byte_length": 1178,
+  "manifest_serialization": "UTF-8 JSON, sorted keys, compact separators, LF-terminated",
+  "manifest_sha256": "0ff8488e8edb69e272d3ce14027187dee115a4c30c56f5dcb28b2534dcd378f0",
+  "repository_commit_sha": "6a456830ca33eb5edaa634a9b0febe5d71bea2be",
+  "roadmap_commitment_hash": "0ff8488e8edb69e272d3ce14027187dee115a4c30c56f5dcb28b2534dcd378f0"
+}
