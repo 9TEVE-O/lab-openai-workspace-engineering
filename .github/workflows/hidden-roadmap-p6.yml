@@ -1,0 +1,191 @@
+name: Hidden Roadmap P6 Infrastructure Dry Run
+
+on:
+  push:
+    branches:
+      - bench/hidden-roadmap-pilot-controls
+    paths:
+      - .github/workflows/hidden-roadmap-p6.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  dry-run:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Checkout public benchmark controls only
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+
+      - name: Assert real roadmap custody is absent
+        shell: bash
+        run: |
+          set -euo pipefail
+          test ! -e 99-custody
+          printf '%s\n' 'actual_roadmap_checkout=false' > p6-custody-isolation.txt
+
+      - name: Checkout exact R0 into isolated trajectory workspace
+        shell: bash
+        run: |
+          set -euo pipefail
+          R0=6a456830ca33eb5edaa634a9b0febe5d71bea2be
+          rm -rf trajectory-workspace/sqlite-utils
+          mkdir -p trajectory-workspace/sqlite-utils
+          git -C trajectory-workspace/sqlite-utils init
+          git -C trajectory-workspace/sqlite-utils remote add origin https://github.com/simonw/sqlite-utils.git
+          git -C trajectory-workspace/sqlite-utils fetch --depth=1 origin "${R0}"
+          git -C trajectory-workspace/sqlite-utils checkout --detach FETCH_HEAD
+          test "$(git -C trajectory-workspace/sqlite-utils rev-parse HEAD)" = "${R0}"
+          test -z "$(git -C trajectory-workspace/sqlite-utils status --porcelain=v1)"
+
+      - name: Seal and reveal synthetic requirements sequentially
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p p6-evidence/reveal
+          S01=00-control/hidden-roadmap-pilot/p6/S01.md
+          S02=00-control/hidden-roadmap-pilot/p6/S02.md
+          sha256sum "${S01}" "${S02}" > p6-evidence/synthetic-feature-hashes.txt
+          python - <<'PY'
+          import hashlib, json, pathlib
+          items=[]
+          for fid in ('S01','S02'):
+              p=pathlib.Path(f'00-control/hidden-roadmap-pilot/p6/{fid}.md')
+              data=p.read_bytes()
+              items.append({'feature_id':fid,'filename':p.name,'sha256':hashlib.sha256(data).hexdigest(),'byte_length':len(data)})
+          manifest={'kind':'P6_SYNTHETIC_ONLY','r0':'6a456830ca33eb5edaa634a9b0febe5d71bea2be','features':items}
+          raw=(json.dumps(manifest,sort_keys=True,separators=(',',':'))+'\n').encode()
+          pathlib.Path('p6-evidence/SYNTHETIC_MANIFEST.json').write_bytes(raw)
+          pathlib.Path('p6-evidence/SYNTHETIC_COMMITMENT.txt').write_text(hashlib.sha256(raw).hexdigest()+'\n')
+          PY
+          cp "${S01}" p6-evidence/reveal/S01.md
+          test ! -e p6-evidence/reveal/S02.md
+          expected=$(awk '$2 ~ /S01.md$/ {print $1}' p6-evidence/synthetic-feature-hashes.txt)
+          actual=$(sha256sum p6-evidence/reveal/S01.md | awk '{print $1}')
+          test "${expected}" = "${actual}"
+          printf '%s\n' 'S01_ONLY' > p6-evidence/reveal-state-before-checkpoint.txt
+
+      - name: Record synthetic context manifest
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib, json, pathlib
+          req=pathlib.Path('p6-evidence/reveal/S01.md').read_bytes()
+          payload={
+            'requirement_id':'S01',
+            'requirement_sha256':hashlib.sha256(req).hexdigest(),
+            'repository_sha':'6a456830ca33eb5edaa634a9b0febe5d71bea2be',
+            'model':'DRY_RUN_NO_MODEL',
+            'memory_enabled':False,
+            'hydrated_external_context':[],
+            'tools':['git','python','pytest','mypy','flake8','black','cog'],
+            'future_requirement_available':False,
+            'authority':'synthetic-p6-only',
+            'currency':'frozen-r0',
+            'relevance':'p6-infrastructure',
+            'compatibility':'python-3.12.13-linux-amd64',
+            'sufficiency':'mechanics-only'
+          }
+          pathlib.Path('p6-evidence/context-manifest.json').write_text(json.dumps(payload,sort_keys=True,indent=2)+'\n')
+          PY
+
+      - name: Materialise exact frozen P1 wheelhouse
+        shell: bash
+        run: |
+          set -euo pipefail
+          GEN="${PWD}/00-control/hidden-roadmap-pilot/p6/generated"
+          rm -rf "${GEN}"
+          mkdir -p "${GEN}/wheelhouse"
+          docker run --rm --platform linux/amd64 \
+            -v "${PWD}/04-proof-packs/hidden-roadmap-p1:/p1:ro" \
+            -v "${GEN}:/generated" \
+            python:3.12.13-slim-trixie@sha256:57cd7c3a7a273101a6485ba99423ee568157882804b1124b4dd04266317710de \
+            bash -lc 'python -m pip download --only-binary=:all: --no-deps --require-hashes -r /p1/requirements.lock -d /generated/wheelhouse'
+          (cd "${GEN}/wheelhouse" && sha256sum -c "${GITHUB_WORKSPACE}/04-proof-packs/hidden-roadmap-p1/wheelhouse.sha256") > p6-evidence/wheelhouse-verify.txt
+
+      - name: Build frozen P6 verifier container
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker build --no-cache --platform linux/amd64 \
+            --build-arg R0=6a456830ca33eb5edaa634a9b0febe5d71bea2be \
+            --build-arg DEBIAN_SNAPSHOT=20260809T000000Z \
+            -f 00-control/hidden-roadmap-pilot/p6/Dockerfile \
+            -t hidden-roadmap-p6:dry-run .
+          docker image inspect hidden-roadmap-p6:dry-run > p6-evidence/image-inspect.json
+
+      - name: Execute synthetic verifier under P3 resource limits
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker run --rm --platform linux/amd64 \
+            --cpus=2.0 --memory=2g --pids-limit=512 --network=none \
+            -v "${PWD}/p6-evidence:/evidence" \
+            hidden-roadmap-p6:dry-run \
+            bash -lc '
+              set -euo pipefail
+              test "$(git rev-parse HEAD)" = "6a456830ca33eb5edaa634a9b0febe5d71bea2be"
+              test -z "$(git status --porcelain=v1)"
+              python --version > /evidence/python-version.txt
+              python -c "import sqlite3; print(sqlite3.sqlite_version)" > /evidence/sqlite-version.txt
+              gcc --version | head -1 > /evidence/gcc-version.txt
+              python -m pytest -q -p no:cacheprovider /benchmark/synthetic_acceptance.py > /evidence/synthetic-verifier.txt
+              python -m pytest -q -p no:cacheprovider tests/test_migrations.py::test_failing_migration_rolls_back >> /evidence/synthetic-verifier.txt
+              mypy --cache-dir=/tmp/mypy-cache sqlite_utils tests > /evidence/mypy.txt
+              python /benchmark/measure_scope.py --repo /workspace/sqlite-utils --base 6a456830ca33eb5edaa634a9b0febe5d71bea2be --head 6a456830ca33eb5edaa634a9b0febe5d71bea2be > /evidence/scope.json
+              test -z "$(git status --porcelain=v1)"
+            '
+
+      - name: Prove checkpoint freeze then exact reset
+        shell: bash
+        run: |
+          set -euo pipefail
+          R0=6a456830ca33eb5edaa634a9b0febe5d71bea2be
+          REPO=trajectory-workspace/sqlite-utils
+          git -C "${REPO}" config user.name 'P6 Synthetic Custodian'
+          git -C "${REPO}" config user.email 'p6-synthetic@invalid.local'
+          printf '%s\n' 'synthetic checkpoint marker' > "${REPO}/P6_SYNTHETIC_MARKER.txt"
+          git -C "${REPO}" add P6_SYNTHETIC_MARKER.txt
+          git -C "${REPO}" commit -m 'P6 synthetic checkpoint freeze' >/dev/null
+          git -C "${REPO}" rev-parse HEAD > p6-evidence/synthetic-checkpoint-sha.txt
+          test "$(cat p6-evidence/synthetic-checkpoint-sha.txt)" != "${R0}"
+          git -C "${REPO}" reset --hard "${R0}" >/dev/null
+          git -C "${REPO}" clean -fdx >/dev/null
+          test "$(git -C "${REPO}" rev-parse HEAD)" = "${R0}"
+          test -z "$(git -C "${REPO}" status --porcelain=v1)"
+          printf '%s\n' "${R0}" > p6-evidence/reset-head.txt
+          printf '%s\n' 'CLEAN' > p6-evidence/reset-status.txt
+
+      - name: Demonstrate next synthetic reveal only after checkpoint
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp 00-control/hidden-roadmap-pilot/p6/S02.md p6-evidence/reveal/S02.md
+          expected=$(awk '$2 ~ /S02.md$/ {print $1}' p6-evidence/synthetic-feature-hashes.txt)
+          actual=$(sha256sum p6-evidence/reveal/S02.md | awk '{print $1}')
+          test "${expected}" = "${actual}"
+          printf '%s\n' 'S01_AND_S02_AFTER_CHECKPOINT' > p6-evidence/reveal-state-after-checkpoint.txt
+
+      - name: Final evidence integrity
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp p6-custody-isolation.txt p6-evidence/
+          find p6-evidence -type f ! -name EVIDENCE_SHA256.txt -print0 | sort -z | xargs -0 sha256sum > p6-evidence/EVIDENCE_SHA256.txt
+          sha256sum \
+            00-control/hidden-roadmap-pilot/P3_RESOURCE_CEILING_v0.1.md \
+            00-control/hidden-roadmap-pilot/P4_VERIFIER_MANIFEST_PUBLIC_v0.1.md \
+            00-control/hidden-roadmap-pilot/P5_PERSISTENT_NFI_PUBLIC_v0.1.md \
+            00-control/hidden-roadmap-pilot/P4_P5_COMMITMENT_v0.1.json \
+            > p6-evidence/control-hashes.txt
+
+      - name: Upload P6 evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: hidden-roadmap-p6-dry-run-evidence
+          path: p6-evidence/**
+          if-no-files-found: error
+          retention-days: 30
