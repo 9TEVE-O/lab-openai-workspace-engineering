@@ -1,0 +1,110 @@
+name: Hidden Roadmap P1 Reproduction
+
+on:
+  push:
+    branches:
+      - bench/hidden-roadmap-p1
+    paths:
+      - .github/workflows/hidden-roadmap-p1.yml
+      - 00-control/hidden-roadmap-p1/**
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  reproduce-r0:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout benchmark control repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+
+      - name: Checkout exact upstream R0 read-only trajectory source
+        shell: bash
+        run: |
+          set -euo pipefail
+          R0=6a456830ca33eb5edaa634a9b0febe5d71bea2be
+          rm -rf trajectory-workspace/sqlite-utils
+          mkdir -p trajectory-workspace/sqlite-utils
+          git -C trajectory-workspace/sqlite-utils init
+          git -C trajectory-workspace/sqlite-utils remote add origin https://github.com/simonw/sqlite-utils.git
+          git -C trajectory-workspace/sqlite-utils fetch --depth=1 origin "${R0}"
+          git -C trajectory-workspace/sqlite-utils checkout --detach FETCH_HEAD
+          test "$(git -C trajectory-workspace/sqlite-utils rev-parse HEAD)" = "${R0}"
+          test -z "$(git -C trajectory-workspace/sqlite-utils status --porcelain=v1)"
+          mkdir -p 00-control/hidden-roadmap-p1/generated/evidence
+          git -C trajectory-workspace/sqlite-utils rev-parse HEAD > 00-control/hidden-roadmap-p1/generated/evidence/source-head.txt
+          git -C trajectory-workspace/sqlite-utils status --porcelain=v1 > 00-control/hidden-roadmap-p1/generated/evidence/source-status.txt
+
+      - name: Materialise wheelhouse and hash lock
+        shell: bash
+        run: |
+          set -euo pipefail
+          CONTROL="${PWD}/00-control/hidden-roadmap-p1"
+          rm -rf "${CONTROL}/generated/wheelhouse"
+          mkdir -p "${CONTROL}/generated/wheelhouse"
+          docker run --rm --platform linux/amd64 \
+            -v "${CONTROL}:/control" \
+            python:3.12.13-slim-trixie@sha256:57cd7c3a7a273101a6485ba99423ee568157882804b1124b4dd04266317710de \
+            bash -lc '
+              set -euo pipefail
+              python --version
+              python -m pip download \
+                --only-binary=:all: \
+                --no-deps \
+                -r /control/requirements.exact.txt \
+                -d /control/generated/wheelhouse
+              python /control/generate_lock.py \
+                --requirements /control/requirements.exact.txt \
+                --wheelhouse /control/generated/wheelhouse \
+                --lock /control/generated/requirements.lock \
+                --manifest /control/generated/lock-manifest.json \
+                --sha256sums /control/generated/wheelhouse.sha256
+            '
+          sha256sum \
+            "${CONTROL}/requirements.exact.txt" \
+            "${CONTROL}/generated/requirements.lock" \
+            "${CONTROL}/generated/lock-manifest.json" \
+            "${CONTROL}/generated/wheelhouse.sha256" \
+            > "${CONTROL}/generated/evidence/control-input-hashes.txt"
+
+      - name: Build immutable P1 container
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker build \
+            --no-cache \
+            --platform linux/amd64 \
+            --build-arg R0=6a456830ca33eb5edaa634a9b0febe5d71bea2be \
+            --build-arg DEBIAN_SNAPSHOT=20260809T000000Z \
+            -f 00-control/hidden-roadmap-p1/Dockerfile \
+            -t hidden-roadmap-p1:r0 \
+            .
+          docker image inspect hidden-roadmap-p1:r0 > 00-control/hidden-roadmap-p1/generated/evidence/image-inspect.json
+
+      - name: Execute baseline once
+        shell: bash
+        run: |
+          set +e
+          docker run --rm --platform linux/amd64 \
+            -v "${PWD}/00-control/hidden-roadmap-p1/generated/evidence:/evidence" \
+            hidden-roadmap-p1:r0
+          rc=$?
+          set -e
+          printf '%s\n' "${rc}" > 00-control/hidden-roadmap-p1/generated/evidence/container.exitcode
+          exit "${rc}"
+
+      - name: Upload P1 evidence and generated lock
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hidden-roadmap-p1-r0-evidence
+          if-no-files-found: error
+          retention-days: 30
+          path: |
+            00-control/hidden-roadmap-p1/generated/requirements.lock
+            00-control/hidden-roadmap-p1/generated/lock-manifest.json
+            00-control/hidden-roadmap-p1/generated/wheelhouse.sha256
+            00-control/hidden-roadmap-p1/generated/evidence/**
