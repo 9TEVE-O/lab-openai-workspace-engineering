@@ -1,0 +1,135 @@
+name: Hidden Roadmap V0 Preflight
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - bench/hidden-roadmap-v0
+    paths:
+      - .github/workflows/hidden-roadmap-v0.yml
+      - 00-control/hidden-roadmap-v0/**
+
+permissions:
+  contents: read
+
+jobs:
+  v0-preflight:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Checkout benchmark control repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+
+      - name: Materialise four exact R0 worktrees
+        shell: bash
+        run: |
+          set -euo pipefail
+          R0=6a456830ca33eb5edaa634a9b0febe5d71bea2be
+          PARENT=a7b734946f95341f52d866321c183e3532ac0aad
+          rm -rf trajectory-workspace
+          for ARM in P-A P-B P-C P-D canonical; do
+            TARGET="trajectory-workspace/${ARM}/sqlite-utils"
+            if [ "${ARM}" = canonical ]; then TARGET="trajectory-workspace/sqlite-utils"; fi
+            mkdir -p "${TARGET}"
+            git -C "${TARGET}" init
+            git -C "${TARGET}" remote add origin https://github.com/simonw/sqlite-utils.git
+            git -C "${TARGET}" fetch --depth=2 origin "${R0}"
+            git -C "${TARGET}" checkout --detach FETCH_HEAD
+            test "$(git -C "${TARGET}" rev-parse HEAD)" = "${R0}"
+            test "$(git -C "${TARGET}" rev-parse HEAD^)" = "${PARENT}"
+            test -z "$(git -C "${TARGET}" status --porcelain=v1)"
+          done
+
+      - name: Re-materialise exact P1 wheel lock
+        shell: bash
+        run: |
+          set -euo pipefail
+          CONTROL="${PWD}/00-control/hidden-roadmap-p1"
+          rm -rf "${CONTROL}/generated"
+          mkdir -p "${CONTROL}/generated/wheelhouse" "${CONTROL}/generated/evidence"
+          docker run --rm --platform linux/amd64 \
+            -v "${CONTROL}:/control" \
+            python:3.12.13-slim-trixie@sha256:57cd7c3a7a273101a6485ba99423ee568157882804b1124b4dd04266317710de \
+            bash -lc '
+              set -euo pipefail
+              test "$(python --version)" = "Python 3.12.13"
+              python -m pip download --only-binary=:all: --no-deps \
+                -r /control/requirements.exact.txt -d /control/generated/wheelhouse
+              python /control/generate_lock.py \
+                --requirements /control/requirements.exact.txt \
+                --wheelhouse /control/generated/wheelhouse \
+                --lock /control/generated/requirements.lock \
+                --manifest /control/generated/lock-manifest.json \
+                --sha256sums /control/generated/wheelhouse.sha256
+            '
+          test "$(sha256sum "${CONTROL}/requirements.exact.txt" | cut -d' ' -f1)" = "dac9e64c66d3c97b8ee529ca84d6b16568a381323a9ed32d9934d53c5facf877"
+          test "$(sha256sum "${CONTROL}/generated/requirements.lock" | cut -d' ' -f1)" = "79a5fd7ed89df564794284dfc382cb3d099d647ba452d2c236ddb2ff9054ddd8"
+          test "$(sha256sum "${CONTROL}/generated/lock-manifest.json" | cut -d' ' -f1)" = "1110945a85c51bb03dd3b7f472aadd0fcfd40f44be456544f733febae63b82e7"
+          test "$(sha256sum "${CONTROL}/generated/wheelhouse.sha256" | cut -d' ' -f1)" = "69cbdedc48389a7baf5880223af62a15bd8e6195650dcf257c5f02e282c3a77b"
+          cmp "${CONTROL}/generated/requirements.lock" "${PWD}/04-proof-packs/hidden-roadmap-p1/requirements.lock"
+          cmp "${CONTROL}/generated/wheelhouse.sha256" "${PWD}/04-proof-packs/hidden-roadmap-p1/wheelhouse.sha256"
+          test "$(find "${CONTROL}/generated/wheelhouse" -maxdepth 1 -type f -name '*.whl' | wc -l)" -eq 36
+          test "$(python 00-control/hidden-roadmap-v0/build_restored_p1_manifest.py .)" = "adbaf02cf910c4ca97dc4908185d4b02ffa0482e8fded3e7e3684440eafd1980"
+
+      - name: Build reinstantiated P1 environment
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker build --no-cache --platform linux/amd64 \
+            --build-arg R0=6a456830ca33eb5edaa634a9b0febe5d71bea2be \
+            --build-arg DEBIAN_SNAPSHOT=20260809T000000Z \
+            -f 00-control/hidden-roadmap-p1/Dockerfile \
+            -t hidden-roadmap-v0:p1 .
+          mkdir -p 00-control/hidden-roadmap-v0/generated/evidence
+          docker image inspect hidden-roadmap-v0:p1 > 00-control/hidden-roadmap-v0/generated/evidence/rebuilt-image-inspect.json
+
+      - name: Verify frozen V0 control bindings
+        shell: bash
+        run: |
+          set -euo pipefail
+          C=00-control/hidden-roadmap-v0
+          test "$(sha256sum "${C}/P1_ENVIRONMENT_MANIFEST_RESTORED_v0.1.json" | cut -d' ' -f1)" = "adbaf02cf910c4ca97dc4908185d4b02ffa0482e8fded3e7e3684440eafd1980"
+          test "$(sha256sum "${C}/EXECUTOR_PARITY_PROFILE_v0.1.json" | cut -d' ' -f1)" = "29288f6b1997c5645e9159bb769091247f2bddb03d69aca4923d815e765e7140"
+          test "$(sha256sum "${C}/V0_BINDING_v0.1.json" | cut -d' ' -f1)" = "25fd88aeaf6d2ce192e0478cda60dfc6eb5cf8dff3c7c9ebbd24c9b1ef1734a7"
+
+      - name: Run V0 only for P-A P-B P-C P-D
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "${PWD}/00-control/hidden-roadmap-v0/generated/evidence"
+          docker run --rm --platform linux/amd64 --network none \
+            --entrypoint python \
+            -v "${PWD}/trajectory-workspace:/workspace:ro" \
+            -v "${PWD}/00-control/hidden-roadmap-v0:/v0-control:ro" \
+            -v "${PWD}/00-control/hidden-roadmap-p1:/p1-control:ro" \
+            -v "${PWD}/00-control/hidden-roadmap-v0/generated/evidence:/v0-evidence" \
+            hidden-roadmap-v0:p1 /v0-control/v0_preflight.py
+
+      - name: Prove no feature execution occurred
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json, pathlib
+          p=pathlib.Path('00-control/hidden-roadmap-v0/generated/evidence/V0_SUMMARY.json')
+          d=json.loads(p.read_text())
+          assert d['overall_status']=='PASS', d
+          assert d['feature_trajectory_execution']=='NOT_STARTED', d
+          assert d['arms']=={'P-A':'PASS','P-B':'PASS','P-C':'PASS','P-D':'PASS'}, d
+          print(json.dumps(d, indent=2, sort_keys=True))
+          PY
+
+      - name: Upload V0 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hidden-roadmap-v0-preflight-evidence
+          if-no-files-found: error
+          retention-days: 30
+          path: |
+            00-control/hidden-roadmap-v0/P1_ENVIRONMENT_MANIFEST_RESTORED_v0.1.json
+            00-control/hidden-roadmap-v0/EXECUTOR_PARITY_PROFILE_v0.1.json
+            00-control/hidden-roadmap-v0/EXECUTOR_SYSTEM_v0.1.txt
+            00-control/hidden-roadmap-v0/EXECUTOR_DEVELOPER_v0.1.txt
+            00-control/hidden-roadmap-v0/V0_BINDING_v0.1.json
+            00-control/hidden-roadmap-v0/generated/evidence/**
