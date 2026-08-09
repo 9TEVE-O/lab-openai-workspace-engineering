@@ -1,10 +1,8 @@
 import json
 from pathlib import Path
 
-import pytest
 from click.testing import CliRunner
 
-import sqlite_utils
 from sqlite_utils import Database, Migrations
 from sqlite_utils.cli import cli
 
@@ -89,14 +87,14 @@ def test_plan_does_not_upgrade_legacy_history(tmp_path):
 
 def _write_file(path: Path):
     path.write_text(
-        """from sqlite_utils import Migrations\n"
+        "from sqlite_utils import Migrations\n"
         "m = Migrations('alpha')\n"
         "@m()\n"
         "def one(db): db['effects'].insert({'name': 'one'})\n"
         "@m(transactional=False)\n"
         "def two(db): db['effects'].insert({'name': 'two'})\n"
         "@m()\n"
-        "def three(db): db['effects'].insert({'name': 'three'})\n""",
+        "def three(db): db['effects'].insert({'name': 'three'})\n",
         encoding="utf-8",
     )
 
