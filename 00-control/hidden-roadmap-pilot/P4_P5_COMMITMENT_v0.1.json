@@ -1,0 +1,18 @@
+{
+  "custody_branch": "custody/hidden-roadmap-p2-v0.1",
+  "custody_commit": "2e4cc42dcb8d5b27e587ade1abec08d19003567b",
+  "files": [
+    {"name": "F01_acceptance.py", "sha256": "9712fcd519016e8333642d4446d303244770e20cfac5bb30633fd7bfd512b348"},
+    {"name": "F02_acceptance.py", "sha256": "37554e8de86ee3fd13a972cbf77e97b82e779ec40abb1222f49feb387ddbc697"},
+    {"name": "F03_acceptance.py", "sha256": "5ad47c4095cffda97b18c1121e7cde4efd6a62639b3b6ed1c9ca4fcd44b89590"},
+    {"name": "F04_acceptance.py", "sha256": "03476df4cb17fd6cde4c3a93541cf19994877202fb735526bc7af13d33d02950"},
+    {"name": "F05_acceptance.py", "sha256": "b11f44423e9b202045dcd8787ec6a704e471d5b81108a8356f519c1495ef60fe"},
+    {"name": "P5_NFI_FULL_v0.1.md", "sha256": "1951da5c1e396eb02d9852e9727c44655f9610f9bc80ec9058c7ebc2bce7e75d"}
+  ],
+  "file_hash_manifest_sha256": "2329a8b0379bc652bce66eaba2a8cc70127c32cb7588142b399e7b27024530c8",
+  "seal_workflow_run": 31304511616,
+  "seal_artifact_id": 9035509873,
+  "seal_artifact_digest": "sha256:23b74f24e3bb30c80738a3b9590cbf9a092fa7cffc578b290726d7215fb289c0",
+  "syntax_validation": "PASS",
+  "python": "3.12.13"
+}
