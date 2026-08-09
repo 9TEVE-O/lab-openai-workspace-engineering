@@ -17,15 +17,18 @@ const expectedTitles = vault.prompts.map((p) => p.title);
 const profileDir = path.join(outputDir, 'isolated-browser-profile');
 
 const report = {
-  schema_version: '0.1',
+  schema_version: '0.4',
   target: 'https://appliedaihub.org/tools/prompt-vault/',
   isolated_profile: true,
   vault_file: path.basename(vaultFile),
   vault_title_expected: vault.vaultTitle,
   prompt_titles_expected: expectedTitles,
   imported: false,
+  import_mode: null,
   verified: false,
   page_url: null,
+  navigation_warning: null,
+  challenge_detected: false,
   visible_buttons: [],
   visible_links: [],
   indexeddb: [],
@@ -35,43 +38,79 @@ const report = {
 let context;
 try {
   context = await chromium.launchPersistentContext(profileDir, {
-    headless: true,
+    headless: false,
     viewport: { width: 1440, height: 1000 },
+    screen: { width: 1440, height: 1000 },
+    locale: 'en-AU',
+    timezoneId: 'Australia/Adelaide',
+    userAgent: 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36',
     acceptDownloads: true,
+    args: ['--disable-blink-features=AutomationControlled'],
   });
-  const pages = context.pages();
-  const page = pages[0] || await context.newPage();
+  await context.addInitScript(() => {
+    Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
+  });
+  let page = context.pages()[0] || await context.newPage();
   page.on('dialog', async (dialog) => {
     try { await dialog.accept(); } catch {}
   });
-  await page.goto(report.target, { waitUntil: 'networkidle', timeout: 120000 });
+
+  try {
+    await page.goto(report.target, { waitUntil: 'domcontentloaded', timeout: 120000 });
+  } catch (error) {
+    report.navigation_warning = error instanceof Error ? error.message : String(error);
+    if (!(await page.locator('body').count())) throw error;
+  }
+
+  for (let attempt = 0; attempt < 18; attempt++) {
+    await page.waitForTimeout(2500);
+    const title = await page.title().catch(() => '');
+    const body = await page.locator('body').innerText().catch(() => '');
+    const challenged = /just a moment|verifying you are human|performing security verification|cloudflare/i.test(`${title}\n${body}`);
+    report.challenge_detected ||= challenged;
+    if (!challenged && /prompt vault/i.test(`${title}\n${body}`)) break;
+  }
+
+  report.page_url = page.url();
   await page.screenshot({ path: path.join(outputDir, '01-before-import.png'), fullPage: true });
 
-  const collectUi = async () => {
-    report.visible_buttons = await page.locator('button').evaluateAll((els) => els.map((e) => ({
+  const collectUi = async (activePage) => {
+    report.visible_buttons = await activePage.locator('button, [role="button"]').evaluateAll((els) => els.map((e) => ({
       text: (e.innerText || '').trim(),
       title: e.getAttribute('title'),
       aria: e.getAttribute('aria-label'),
-    })).slice(0, 100));
-    report.visible_links = await page.locator('a').evaluateAll((els) => els.map((e) => ({
+    })).slice(0, 150));
+    report.visible_links = await activePage.locator('a').evaluateAll((els) => els.map((e) => ({
       text: (e.innerText || '').trim(),
       href: e.href,
       title: e.getAttribute('title'),
       aria: e.getAttribute('aria-label'),
-    })).slice(0, 100));
+    })).slice(0, 150));
   };
-  await collectUi();
+  await collectUi(page);
 
-  // Marketing-page handoff, when present.
+  const currentBody = await page.locator('body').innerText().catch(() => '');
+  if (/cloudflare|verifying you are human|performing security verification/i.test(currentBody)) {
+    throw new Error('Cloudflare challenge prevented access to the Prompt Vault interface');
+  }
+
+  const initialPageCount = context.pages().length;
   const launchCandidate = page.getByText(/start organizing now|open prompt vault|launch prompt vault|open vault/i).first();
   if (await launchCandidate.count()) {
     try {
-      await launchCandidate.click({ timeout: 10000 });
-      await page.waitForLoadState('networkidle', { timeout: 60000 }).catch(() => {});
-    } catch {}
+      await launchCandidate.click({ timeout: 15000 });
+      await page.waitForTimeout(5000);
+      if (context.pages().length > initialPageCount) {
+        page = context.pages().at(-1);
+        await page.waitForLoadState('domcontentloaded', { timeout: 60000 }).catch(() => {});
+        await page.waitForTimeout(3000);
+      }
+    } catch (error) {
+      report.launch_warning = error instanceof Error ? error.message : String(error);
+    }
   }
 
-  async function tryFrame(frame) {
+  async function tryFrame(activePage, frame) {
     const inputs = frame.locator('input[type="file"]');
     if (await inputs.count()) {
       await inputs.first().setInputFiles(vaultFile);
@@ -82,8 +121,8 @@ try {
     for (let i = 0; i < n; i++) {
       const candidate = candidates.nth(i);
       try {
-        const chooserPromise = page.waitForEvent('filechooser', { timeout: 5000 }).catch(() => null);
-        await candidate.click({ timeout: 5000 });
+        const chooserPromise = activePage.waitForEvent('filechooser', { timeout: 8000 }).catch(() => null);
+        await candidate.click({ timeout: 8000 });
         const chooser = await chooserPromise;
         if (chooser) {
           await chooser.setFiles(vaultFile);
@@ -100,19 +139,31 @@ try {
   }
 
   let imported = false;
-  for (const frame of page.frames()) {
-    if (await tryFrame(frame)) {
-      imported = true;
-      break;
+  for (const activePage of context.pages()) {
+    for (const frame of activePage.frames()) {
+      if (await tryFrame(activePage, frame)) {
+        imported = true;
+        page = activePage;
+        break;
+      }
     }
+    if (imported) break;
   }
   report.imported = imported;
   if (!imported) throw new Error('No Prompt Vault import control or file input was found');
 
-  await page.waitForTimeout(5000);
+  await page.waitForTimeout(2500);
+  const overwriteOption = page.getByText(/clear and overwrite/i).first();
+  if (!(await overwriteOption.count())) {
+    throw new Error('Prompt Vault import options opened, but Clear and overwrite was not available');
+  }
+  await overwriteOption.click({ timeout: 15000 });
+  report.import_mode = 'clear_and_overwrite';
+
+  await page.waitForTimeout(7000);
   await page.screenshot({ path: path.join(outputDir, '02-after-import.png'), fullPage: true });
   report.page_url = page.url();
-  await collectUi();
+  await collectUi(page);
 
   const bodyText = await page.locator('body').innerText();
   const missingTitles = expectedTitles.filter((title) => !bodyText.includes(title));
@@ -141,7 +192,7 @@ try {
 
   report.prompt_titles_missing = missingTitles;
   report.vault_title_visible = vaultTitleVisible;
-  report.verified = imported && missingTitles.length === 0;
+  report.verified = imported && report.import_mode === 'clear_and_overwrite' && missingTitles.length === 0 && vaultTitleVisible;
   if (!report.verified) throw new Error(`Import completed but UI verification failed; missing titles: ${missingTitles.join(', ')}`);
 } catch (error) {
   report.error = error instanceof Error ? error.stack || error.message : String(error);
