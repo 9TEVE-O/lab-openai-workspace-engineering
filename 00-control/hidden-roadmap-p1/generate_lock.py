@@ -31,9 +31,13 @@ def parse_expected(path: Path) -> dict[str, tuple[str, str]]:
 
 def wheel_metadata(path: Path) -> tuple[str, str]:
     with zipfile.ZipFile(path) as zf:
-        candidates = [n for n in zf.namelist() if n.endswith(".dist-info/METADATA")]
+        candidates = [
+            n
+            for n in zf.namelist()
+            if n.endswith(".dist-info/METADATA") and n.count("/") == 1
+        ]
         if len(candidates) != 1:
-            raise SystemExit(f"Expected one METADATA in {path.name}, found {len(candidates)}")
+            raise SystemExit(f"Expected one top-level METADATA in {path.name}, found {len(candidates)}")
         metadata = Parser().parsestr(zf.read(candidates[0]).decode("utf-8"))
     return metadata["Name"], metadata["Version"]
 
