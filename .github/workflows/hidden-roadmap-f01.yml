@@ -1,0 +1,215 @@
+name: Hidden Roadmap F01 Trajectory
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - bench/hidden-roadmap-f01
+    paths:
+      - .github/workflows/hidden-roadmap-f01.yml
+      - 00-control/hidden-roadmap-f01/**
+
+permissions:
+  contents: read
+
+jobs:
+  f01:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+    steps:
+      - name: Checkout benchmark control repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+
+      - name: Verify F01 release boundary and frozen controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          C=00-control/hidden-roadmap-f01
+          V0=00-control/hidden-roadmap-v0
+          test "$(sha256sum "${C}/F01_RELEASE_v0.1.json" | cut -d' ' -f1)" = "7a684bc634a6803f586b9c43111598ec4b16ac45f86a60d8fcc6a7674535965b"
+          declare -A PART_HASHES=(
+            [part-00]=9c30b3f821ad63d748be12cccc2f2fef4736d1027005731844609fe0838bfe58
+            [part-01]=d0a09d635e07135c0f201052f16fd1098967bd632d426ae5d4352d2da24ef78d
+            [part-02]=c6f68c56a37332b15d2ee02059028ad491c874ac2259cf54e1e10932d2e0e94b
+            [part-03]=f8c819bc842ff9a89e1e2c5cabecd44dcfc7deab19762f0db76cd4ebf2700252
+            [part-04]=8e92fe43ce11e77d1531b38c3b29e9c54dd9b4c4eeb5e0d4dbf4a93ab85f4d73
+            [part-05]=601b321deb7cdbf11404ed828701c6259d8ad428fd8c88ac3b17a2d403063974
+            [part-06]=27a5300eb289522bc40f49d1b29d7337abc59a6b885d11c9808464575484e70a
+            [part-07]=c552d15cbd225a10315e6f50b8d3919351e3eaf0e569f8682e16d1bd661391fd
+            [part-08]=503f51a3caf06d68fa1d2f4094449fb8aa3c4341a47829823114013f1d73b3cc
+            [part-09]=84bf3fe859eee876d7bf91e4031503d62ace0a1e142d0ed2fdd05fb6c867f0a2
+          )
+          for PART in part-{00..09}; do
+            test "$(sha256sum "${C}/bundle-parts/${PART}" | cut -d' ' -f1)" = "${PART_HASHES[${PART}]}"
+          done
+          test "$(sha256sum "${V0}/P1_ENVIRONMENT_MANIFEST_RESTORED_v0.1.json" | cut -d' ' -f1)" = "adbaf02cf910c4ca97dc4908185d4b02ffa0482e8fded3e7e3684440eafd1980"
+          test "$(sha256sum "${V0}/EXECUTOR_PARITY_PROFILE_v0.1.json" | cut -d' ' -f1)" = "29288f6b1997c5645e9159bb769091247f2bddb03d69aca4923d815e765e7140"
+          python - <<'PY'
+          import json, pathlib
+          p=pathlib.Path('00-control/hidden-roadmap-f01/F01_RELEASE_v0.1.json')
+          d=json.loads(p.read_text())
+          assert d['authorised_scope']=='F01_ONLY'
+          assert d['feature']['id']=='F01'
+          assert d['future_features_released'] is False
+          assert d['roadmap_sha256']=='2aa4ecbee879f3431ae17795ff7eb9e90c4ae74c67b338cc8ec1566137799ffe'
+          names=[x.name for x in pathlib.Path('00-control/hidden-roadmap-f01').glob('*')]
+          assert not any(n.startswith(('F02','F03','F04','F05')) for n in names), names
+          PY
+          rm -rf /tmp/f01-control && mkdir -p /tmp/f01-control
+          cat "${C}"/bundle-parts/part-{00..09} > /tmp/F01_CONTROL_BUNDLE_v0.1.tar.gz.b64
+          test "$(sha256sum /tmp/F01_CONTROL_BUNDLE_v0.1.tar.gz.b64 | cut -d' ' -f1)" = "b6387afff18216f7612bd1be955f0432f61c0c5bbfdc8ffc6c335f1341481bbe"
+          base64 -d /tmp/F01_CONTROL_BUNDLE_v0.1.tar.gz.b64 > /tmp/F01_CONTROL_BUNDLE_v0.1.tar.gz
+          test "$(sha256sum /tmp/F01_CONTROL_BUNDLE_v0.1.tar.gz | cut -d' ' -f1)" = "ae28467b80032fed91eb4f080200b6f09d396e16b20f2559c31d7fe1a53a6713"
+          tar -xzf /tmp/F01_CONTROL_BUNDLE_v0.1.tar.gz -C /tmp/f01-control
+          python - <<'PY'
+          import hashlib,json,pathlib
+          root=pathlib.Path('/tmp/f01-control')
+          m=json.loads((root/'BUNDLE_MANIFEST.json').read_text())
+          for f in m['files']:
+              p=root/f['path']; assert p.exists(), f
+              assert len(p.read_bytes())==f['bytes'], f
+              assert hashlib.sha256(p.read_bytes()).hexdigest()==f['sha256'], f
+          assert not any('/F02/' in '/'+f['path'] or '/F03/' in '/'+f['path'] or '/F04/' in '/'+f['path'] or '/F05/' in '/'+f['path'] for f in m['files'])
+          print('F01 control bundle verified')
+          PY
+          cp "${V0}/EXECUTOR_SYSTEM_v0.1.txt" "${C}/EXECUTOR_SYSTEM_v0.1.txt"
+          cp "${V0}/EXECUTOR_DEVELOPER_v0.1.txt" "${C}/EXECUTOR_DEVELOPER_v0.1.txt"
+
+      - name: Materialise four exact R0 worktrees
+        shell: bash
+        run: |
+          set -euo pipefail
+          R0=6a456830ca33eb5edaa634a9b0febe5d71bea2be
+          PARENT=a7b734946f95341f52d866321c183e3532ac0aad
+          rm -rf trajectory-workspace
+          for ARM in P-A P-B P-C P-D canonical; do
+            TARGET="trajectory-workspace/${ARM}/sqlite-utils"
+            if [ "${ARM}" = canonical ]; then TARGET="trajectory-workspace/sqlite-utils"; fi
+            mkdir -p "${TARGET}"
+            git -C "${TARGET}" init
+            git -C "${TARGET}" remote add origin https://github.com/simonw/sqlite-utils.git
+            git -C "${TARGET}" fetch --depth=2 origin "${R0}"
+            git -C "${TARGET}" checkout --detach FETCH_HEAD
+            test "$(git -C "${TARGET}" rev-parse HEAD)" = "${R0}"
+            test "$(git -C "${TARGET}" rev-parse HEAD^)" = "${PARENT}"
+            test -z "$(git -C "${TARGET}" status --porcelain=v1)"
+          done
+
+      - name: Re-materialise exact P1 wheel lock
+        shell: bash
+        run: |
+          set -euo pipefail
+          CONTROL="${PWD}/00-control/hidden-roadmap-p1"
+          rm -rf "${CONTROL}/generated"
+          mkdir -p "${CONTROL}/generated/wheelhouse" "${CONTROL}/generated/evidence"
+          docker run --rm --platform linux/amd64 \
+            -v "${CONTROL}:/control" \
+            python:3.12.13-slim-trixie@sha256:57cd7c3a7a273101a6485ba99423ee568157882804b1124b4dd04266317710de \
+            bash -lc '
+              set -euo pipefail
+              test "$(python --version)" = "Python 3.12.13"
+              python -m pip download --only-binary=:all: --no-deps -r /control/requirements.exact.txt -d /control/generated/wheelhouse
+              python /control/generate_lock.py --requirements /control/requirements.exact.txt --wheelhouse /control/generated/wheelhouse --lock /control/generated/requirements.lock --manifest /control/generated/lock-manifest.json --sha256sums /control/generated/wheelhouse.sha256
+            '
+          test "$(sha256sum "${CONTROL}/requirements.exact.txt" | cut -d' ' -f1)" = "dac9e64c66d3c97b8ee529ca84d6b16568a381323a9ed32d9934d53c5facf877"
+          test "$(sha256sum "${CONTROL}/generated/requirements.lock" | cut -d' ' -f1)" = "79a5fd7ed89df564794284dfc382cb3d099d647ba452d2c236ddb2ff9054ddd8"
+          test "$(sha256sum "${CONTROL}/generated/lock-manifest.json" | cut -d' ' -f1)" = "1110945a85c51bb03dd3b7f472aadd0fcfd40f44be456544f733febae63b82e7"
+          test "$(sha256sum "${CONTROL}/generated/wheelhouse.sha256" | cut -d' ' -f1)" = "69cbdedc48389a7baf5880223af62a15bd8e6195650dcf257c5f02e282c3a77b"
+          cmp "${CONTROL}/generated/requirements.lock" "${PWD}/04-proof-packs/hidden-roadmap-p1/requirements.lock"
+          cmp "${CONTROL}/generated/wheelhouse.sha256" "${PWD}/04-proof-packs/hidden-roadmap-p1/wheelhouse.sha256"
+          test "$(find "${CONTROL}/generated/wheelhouse" -maxdepth 1 -type f -name '*.whl' | wc -l)" -eq 36
+
+      - name: Build reinstantiated P1 environment
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker build --no-cache --platform linux/amd64 \
+            --build-arg R0=6a456830ca33eb5edaa634a9b0febe5d71bea2be \
+            --build-arg DEBIAN_SNAPSHOT=20260809T000000Z \
+            -f 00-control/hidden-roadmap-p1/Dockerfile \
+            -t hidden-roadmap-f01:p1 .
+          mkdir -p 00-control/hidden-roadmap-f01/generated/evidence
+          docker image inspect hidden-roadmap-f01:p1 > 00-control/hidden-roadmap-f01/generated/evidence/rebuilt-image-inspect.json
+
+      - name: Capture frozen NFI-07 R0 performance baseline before F01 exposure
+        shell: bash
+        run: |
+          set -euo pipefail
+          PERF="${PWD}/00-control/hidden-roadmap-f01/generated/perf"
+          rm -rf "${PERF}" && mkdir -p "${PERF}"
+          docker run --rm --platform linux/amd64 --network none \
+            --entrypoint python \
+            -v "/tmp/f01-control:/f01-control:ro" \
+            -v "${PERF}:/perf" \
+            hidden-roadmap-f01:p1 /f01-control/capture_perf_baseline.py --output /perf/NFI07_R0_BASELINE_v0.1.json
+          test -s "${PERF}/NFI07_R0_BASELINE_v0.1.json"
+
+      - name: Verify OpenAI execution credential is present
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -z "${OPENAI_API_KEY:-}" ]; then
+            echo "::error::OPENAI_API_KEY is not configured for this repository. F01 has not been sent to an executor model."
+            exit 86
+          fi
+
+      - name: Execute F01 trajectories under frozen parity controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          CONTROL="${PWD}/00-control/hidden-roadmap-f01"
+          EVIDENCE="${CONTROL}/generated/evidence"
+          PERF="${CONTROL}/generated/perf"
+          python /tmp/f01-control/f01_orchestrator.py \
+            --workspace "${PWD}/trajectory-workspace" \
+            --control "${CONTROL}" \
+            --v0-control "${PWD}/00-control/hidden-roadmap-v0" \
+            --evaluator "/tmp/f01-control/evaluator" \
+            --evidence "${EVIDENCE}" \
+            --perf "${PERF}" \
+            --image hidden-roadmap-f01:p1
+
+      - name: Seal local F01 trajectory repositories
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="${PWD}/00-control/hidden-roadmap-f01/generated/evidence/repos"
+          mkdir -p "${OUT}"
+          for ARM in P-A P-B P-C P-D; do
+            if [ -d "trajectory-workspace/${ARM}/sqlite-utils" ]; then
+              tar -czf "${OUT}/${ARM}-F01-repository.tar.gz" -C "trajectory-workspace/${ARM}" sqlite-utils
+              sha256sum "${OUT}/${ARM}-F01-repository.tar.gz" > "${OUT}/${ARM}-F01-repository.tar.gz.sha256"
+            fi
+          done
+
+      - name: Prove future features were not released
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json,pathlib
+          p=pathlib.Path('00-control/hidden-roadmap-f01/F01_RELEASE_v0.1.json')
+          d=json.loads(p.read_text())
+          assert d['feature']['id']=='F01' and d['future_features_released'] is False
+          summary=pathlib.Path('00-control/hidden-roadmap-f01/generated/evidence/F01_EXECUTION_SUMMARY.json')
+          if summary.exists():
+              s=json.loads(summary.read_text()); assert s['scope']=='F01_ONLY' and s['future_features_released'] is False
+          print('F02-F05 remain unreleased')
+          PY
+
+      - name: Upload F01 execution evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hidden-roadmap-f01-execution-evidence
+          if-no-files-found: error
+          retention-days: 30
+          path: |
+            00-control/hidden-roadmap-f01/F01_RELEASE_v0.1.json
+            00-control/hidden-roadmap-f01/generated/**
+            00-control/hidden-roadmap-v0/P1_ENVIRONMENT_MANIFEST_RESTORED_v0.1.json
+            00-control/hidden-roadmap-v0/EXECUTOR_PARITY_PROFILE_v0.1.json
