@@ -6,111 +6,84 @@ Use it when entering the repo cold and deciding what to do next.
 
 ## Current objective
 
-Turn the LAB OpenAI workspace scaffold into a usable execution system for reusable AI work, Safe Intake proof, skill-pack development, app/MCP review, and client-facing evidence.
+Keep the repository aligned with completed, tested or explicitly approved AI engineering capability without promoting active experiments, private client work, drafts or unsupported claims into canon.
 
-## Completed work
+## Current capability areas
 
-The first scaffold pass is complete:
+- Safe Intake and document-control patterns
+- LAB AI skill-pack routing and reusable skills
+- app/MCP submission and security review
+- System Zero governance and registry validation
+- AI Workflow Control Review
+- evidence-bound evaluation and proof records
+- controlled AI asset activation
+- tool-library governance and lifecycle control
+- bounded prototype review and repair practices
 
-- [x] README operating thesis added
-- [x] `REPO-MAP.md` added
-- [x] workspace map created
-- [x] LAB AI skill pack created
-- [x] LAB AI skill pack hardened
-- [x] Safe Intake demo specification created
-- [x] OpenAI Developers extraction notes converted into reusable LAB skills
-- [x] evidence-led proof pack examples added
-- [x] MCP/App submission review harness added
+## Repository sync state
 
-Completed issues:
+The previous execution dashboard was centred on the Safe Intake demo path. That path remains valid, but it no longer represents the full body of completed engineering work.
 
-- [x] #1 Harden LAB AI skill pack files
-- [x] #2 Add Safe Intake demo specification
-- [x] #3 Convert OpenAI Developers extraction notes into reusable skills
-- [x] #4 Add evidence-led proof pack examples
-- [x] #5 Add MCP/App submission review harness
+The current sync batch records material capability completed or approved after the repository's previous main-branch update.
+
+See:
+
+`00-control/REPO-SYNC-2026-08-19.md`
 
 ## Active next move
 
-Create the next execution layer:
+Complete one controlled repository sync:
 
 ```text
-Safe Intake demo spec
-→ clickable prototype plan
-→ build checklist
-→ test cases
-→ proof artefact
+verified project status
+→ preserve evidence boundary
+→ add or update repository record
+→ review diff
+→ run repository checks
+→ human merge decision
 ```
 
-Recommended next issue:
+## Admission gate
 
-```text
-#7 Add Safe Intake clickable prototype plan
-```
+Add work to canonical repository areas only when at least one of the following is true:
 
-## Do not do yet
+- completed and approved for the stated use;
+- tested with recorded evidence and limitations;
+- released for explicitly bounded internal use;
+- required as a factual record of a completed validation exercise.
 
-- Do not add real client documents.
-- Do not add secrets, API keys, `.env` values, or credentials.
-- Do not connect live external systems yet.
-- Do not claim production compliance.
-- Do not build a broad agent platform before proving the Safe Intake demo path.
-- Do not expand into unrelated AI tool research until the demo plan exists.
+Do not upgrade status during repository synchronisation.
 
-## Open questions
+## Hold outside canon
 
-- What format should the first prototype use: single-page HTML, React app, or ChatGPT App/MCP demo?
-- What synthetic sample document should be the default fixture?
-- Should the demo prioritise visual proof, tool-state proof, or app-submission readiness?
-- Who is the first intended reviewer: internal LAB, a music/creative client, or a technical evaluator?
-- What counts as the first successful demo: screenshot, walkthrough, working local app, or hosted preview?
+Keep these out of canonical capability areas until their own gate is satisfied:
 
-## Next 3 issues to create
+- active or incomplete experiments;
+- candidate skills that remain non-canon;
+- product claims without required external validation;
+- unresolved version-authority cases;
+- private client documents or identifying evidence;
+- production, compliance, cybersecurity or commercial claims not supported by evidence.
 
-### #7 Add Safe Intake clickable prototype plan
+## Non-negotiable controls
 
-Define the simplest prototype that demonstrates the Safe Intake control flow without real client data or live integrations.
+- Do not add secrets, API keys, `.env` values or credentials.
+- Do not add real client documents unless explicitly authorised and appropriately sanitised.
+- Do not claim production readiness because a prototype works locally.
+- Do not treat implementation as proof of correctness.
+- Preserve limitations, test scope and human authority boundaries.
+- Prefer reversible pull-request updates over direct uncontrolled changes to `main`.
 
-Acceptance criteria:
+## Definition of done for this sync
 
-- prototype format chosen
-- screen/state list defined
-- sample fixture defined
-- state transitions defined
-- blocked actions defined
-- audit summary output defined
-- demo success criterion defined
-
-### #8 Add synthetic Safe Intake sample document fixture
-
-Create a safe synthetic sample document for the demo.
-
-Acceptance criteria:
-
-- no real personal or client data
-- includes placeholder PII/confidential categories
-- suitable for artist onboarding or music contract demo
-- includes expected detection labels
-- includes expected redacted output
-
-### #9 Add Safe Intake demo test cases
-
-Create positive and negative test cases for the demo.
-
-Acceptance criteria:
-
-- at least five positive test cases
-- at least five negative/blocking test cases
-- approval-gate tests included
-- audit-summary tests included
-- raw-content blocked-path tests included
+The repository accurately represents the significant completed and approved engineering capability currently available, with unsupported or unresolved work explicitly held rather than silently promoted.
 
 ## Review rule
 
-Before starting a new task, ask:
+Before admitting an artefact, ask:
 
 ```text
-Does this move the repo closer to a demonstrable, evidence-backed Safe Intake workflow?
+What evidence supports this status, what is the authority boundary, and what claim would become false if we overstated it?
 ```
 
-If not, park it.
+If the answer is unclear, hold the artefact outside canon.
