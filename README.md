@@ -1,20 +1,24 @@
 # LAB OpenAI Workspace Engineering
 
-This repository turns scattered AI work into a structured operating system.
+This repository turns scattered AI work into a structured, evidence-bound engineering workspace.
 
-Instead of leaving useful prompts, workflows, plugin notes, product ideas, and evidence trails inside random chats, this repo gives each kind of work a proper place:
+Instead of leaving useful prompts, workflows, evaluation methods, prototype records, governance controls, plugin notes and evidence trails inside disconnected chats, the repository gives reusable work a controlled place.
 
-- a workspace map
-- reusable skills
+The workspace includes:
+
+- workspace maps and registries
+- reusable skills and operators
 - product-specific operating rules
 - OpenAI/plugin extraction notes
 - Safe Intake specifications
-- client-facing proof packs
-- build and review checklists
+- workflow-control and governance patterns
+- client-facing and internal proof packs
+- build, evaluation and review checklists
+- bounded prototype records
 
 The goal is simple:
 
-> Every useful AI workflow should become reusable, reviewable, and evidence-backed.
+> Every material AI workflow should become reusable, inspectable, reviewable and evidence-backed.
 
 ## Core principle
 
@@ -22,27 +26,37 @@ Do not treat AI work as disposable conversation.
 
 If a workflow matters, give it:
 
-1. a place
-2. a purpose
+1. a defined purpose and scope
+2. an explicit lifecycle state
 3. a repeatable process
-4. a skill file
-5. an evidence trail
+4. evidence and provenance
+5. acceptance criteria or tests
 6. a review gate
+7. limitations and authority boundaries
+8. a controlled path for revision or retirement
 
-## Current focus
+## Current capability areas
 
-The first workspace target is the LAB AI skill pack:
+The repository currently covers or is being synchronised around:
 
-- Router
-- Safe Intake skill
-- App submission skill
-- Workflow audit skill
-- Tool hint/security review skill
-- Client-facing proof pack
+- Safe Intake and document-control patterns
+- LAB AI skill-pack routing and reusable skills
+- app/MCP submission and tool-security review
+- workflow audit and AI Workflow Control Review
+- evidence-bound evaluation and proof artefacts
+- System Zero governance and registry consistency
+- controlled AI asset activation and tool-library governance
+- bounded prototype evaluation and repair practices
+
+## Evidence discipline
+
+Repository presence is not proof of validity.
+
+Storage, repetition, a draft, a prompt, an implementation or a commit do not by themselves establish approval, correctness, production readiness or commercial validation. Each artefact must preserve its actual status and evidence boundary.
 
 ## Operating direction
 
-This repo supports LAB AI & Tech Solutions, Safe Intake, ASPRON-style workflow capsules, OpenAI/Codex plugin exploration, and practical AI governance patterns.
+This repo supports LAB AI & Tech Solutions, Safe Intake, reusable workflow capsules, OpenAI/Codex plugin exploration, practical AI governance and evidence-bound AI engineering.
 
 The working rule:
 
