@@ -1,0 +1,19 @@
+{
+  "task_id": "CAPABILITY_INGEST_TEST_002",
+  "task": "Validate task-level model routing using admitted durable shared state",
+  "status": "active",
+  "requested_operation": "run one restart-safe operational reconstruction cycle before any broader capability promotion",
+  "authority": {
+    "read": ["human", "agent"],
+    "write": ["human-authorised-agent"],
+    "forbidden": ["unauthorised-agent"]
+  },
+  "next_permitted_action": "reconstruct this record from durable state alone and continue only within CAPABILITY_INGEST_TEST_002",
+  "prohibited_actions": [
+    "promote Structured Agent Proposal v0.1",
+    "promote Lightweight Live State Synchronisation v0.1",
+    "treat CAPABILITY_INGEST_TEST_002 as completed before operational restart evidence exists"
+  ],
+  "revision": 1,
+  "updated_at": "2026-08-20T23:27:00+09:30"
+}
