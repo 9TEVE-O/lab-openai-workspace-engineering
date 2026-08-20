@@ -1,0 +1,5 @@
+{
+  "security_task_domains": ["authz", "agentic-permissions"],
+  "planned_only_task_domains": ["design-tokens", "docs"],
+  "unknown_task_domains": ["unregistered-domain"]
+}
