@@ -1,8 +1,8 @@
 {
   "task_id": "CAPABILITY_INGEST_TEST_002",
   "task": "Validate task-level model routing using admitted durable shared state",
-  "status": "active",
-  "requested_operation": "run the remaining bounded task-level model-routing test after the restart-safe reconstruction gate passed",
+  "status": "completed",
+  "requested_operation": "none — experiment closed after both bounded gates passed",
   "authority": {
     "read": ["human", "agent"],
     "write": ["human-authorised-agent"],
@@ -16,16 +16,23 @@
       "merge_commit": "777cdfb368e713133bb34ddc48ad0ac7dd7713bb"
     },
     "task_level_model_routing": {
-      "status": "pending"
+      "status": "pass",
+      "evidence": "capability-ingest/CAPABILITY_INGEST_TEST_002_ROUTING_EVIDENCE_PENDING.md",
+      "merged_pr": 42,
+      "pr_head": "3aefbf4b87f8371f561ad69b264568b998bdb5e0",
+      "merge_commit": "6e287f28abeeebeee45d1555f434fb23039a6a03",
+      "workflow_run_id": 32379353483,
+      "job_id": 96458436770,
+      "result": "CAPABILITY_INGEST_TEST_002 task-level model routing: PASS"
     }
   },
-  "next_permitted_action": "define and execute only the smallest deterministic task-level model-routing test within CAPABILITY_INGEST_TEST_002",
+  "next_permitted_action": "none required — CAPABILITY_INGEST_TEST_002 is closed; reopen only if new evidence exposes a material defect",
   "prohibited_actions": [
-    "promote Structured Agent Proposal v0.1",
-    "promote Lightweight Live State Synchronisation v0.1",
-    "treat CAPABILITY_INGEST_TEST_002 as completed before task-level model-routing evidence exists",
-    "expand into broad model benchmarking or framework comparison"
+    "promote Structured Agent Proposal v0.1 solely from this experiment",
+    "promote Lightweight Live State Synchronisation v0.1 solely from this experiment",
+    "expand this closed experiment into broad model benchmarking or framework comparison",
+    "treat completion of CAPABILITY_INGEST_TEST_002 as production-readiness evidence"
   ],
-  "revision": 2,
-  "updated_at": "2026-08-20T23:44:00+09:30"
+  "revision": 3,
+  "updated_at": "2026-08-21T00:04:00+09:30"
 }
