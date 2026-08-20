@@ -1,0 +1,3 @@
+MERGE_TRIGGERED_REPOSITORY_MAINTENANCE_TEST_001
+Purpose: deterministic stale-document trigger fixture.
+Expected mapping: REPO-MAP.md and NEXT-ACTION.md only.
