@@ -1,0 +1,109 @@
+name: Bun runtime evidence 001
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/bun-runtime-evidence-001.yml'
+      - 'research/experiments/bun-runtime-evidence-001/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  profile:
+    name: Bun machine-readable runtime evidence
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Record Node baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence/node evidence/bun evidence/profile
+          node --version | tee evidence/node/version.txt
+          /usr/bin/time -f 'wall_seconds=%e\nmax_rss_kb=%M' \
+            -o evidence/node/resources.txt \
+            node research/experiments/bun-runtime-evidence-001/workload.mjs \
+            > evidence/node/result.txt \
+            2> evidence/node/stderr.txt
+          cat evidence/node/result.txt
+          cat evidence/node/stderr.txt
+          cat evidence/node/resources.txt
+
+      - name: Install Bun 1.4.0 for experiment only
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install --global bun@1.4.0
+          bun --version | tee evidence/bun/version.txt
+          test "$(bun --version)" = "1.4.0"
+
+      - name: Run same workload under Bun
+        shell: bash
+        run: |
+          set -euo pipefail
+          /usr/bin/time -f 'wall_seconds=%e\nmax_rss_kb=%M' \
+            -o evidence/bun/resources.txt \
+            bun research/experiments/bun-runtime-evidence-001/workload.mjs \
+            > evidence/bun/result.txt \
+            2> evidence/bun/stderr.txt
+          diff -u evidence/node/result.txt evidence/bun/result.txt
+          cat evidence/bun/result.txt
+          cat evidence/bun/stderr.txt
+          cat evidence/bun/resources.txt
+
+      - name: Generate Bun Markdown CPU profile
+        shell: bash
+        run: |
+          set -euo pipefail
+          bun --cpu-prof-md \
+            --cpu-prof-dir ./evidence/profile \
+            research/experiments/bun-runtime-evidence-001/workload.mjs \
+            > evidence/profile/result.txt \
+            2> evidence/profile/stderr.txt
+
+          diff -u evidence/node/result.txt evidence/profile/result.txt
+
+          profile_file="$(find evidence/profile -maxdepth 1 -type f -name '*.cpuprofile.md' -print -quit)"
+          test -n "$profile_file"
+          test -s "$profile_file"
+
+          echo "profile_file=$profile_file"
+          sha256sum "$profile_file"
+          echo '--- PROFILE START ---'
+          cat "$profile_file"
+          echo '--- PROFILE END ---'
+
+      - name: Assert profile is agent-inspectable
+        shell: bash
+        run: |
+          set -euo pipefail
+          profile_file="$(find evidence/profile -maxdepth 1 -type f -name '*.cpuprofile.md' -print -quit)"
+          grep -q 'Hot Functions' "$profile_file"
+          grep -Eq 'scoreCandidates|mix32|workload\.mjs' "$profile_file"
+
+      - name: Write durable experiment summary
+        shell: bash
+        run: |
+          set -euo pipefail
+          profile_file="$(find evidence/profile -maxdepth 1 -type f -name '*.cpuprofile.md' -print -quit)"
+          {
+            echo '# BUN_RUNTIME_EVIDENCE_001 execution summary'
+            echo
+            echo "- Node: $(cat evidence/node/version.txt)"
+            echo "- Bun: $(cat evidence/bun/version.txt)"
+            echo "- Deterministic output: $(cat evidence/bun/result.txt)"
+            echo "- Node resources: $(tr '\n' ' ' < evidence/node/resources.txt)"
+            echo "- Bun resources: $(tr '\n' ' ' < evidence/bun/resources.txt)"
+            echo "- Profile SHA-256: $(sha256sum "$profile_file" | awk '{print $1}')"
+            echo '- Correctness parity: PASS'
+            echo '- Markdown profile generated: PASS'
+            echo '- Agent-inspectable hotspot assertion: PASS'
+          } | tee evidence/SUMMARY.md
+
+          cat evidence/SUMMARY.md
