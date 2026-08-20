@@ -2,17 +2,17 @@
 
 ## Status
 
-ACTIVE — operational shared-state reconstruction gate in progress.
+COMPLETED — both bounded operational gates passed with durable repository evidence.
 
 ## Purpose
 
-Validate task-level model routing while proving that the active experiment can be reconstructed from durable state rather than conversational memory.
+Validate task-level model routing while proving that the experiment can be reconstructed from durable state rather than conversational memory.
 
 ## Authoritative state
 
 `capability-ingest/CAPABILITY_INGEST_TEST_002_STATE.json`
 
-The durable state record controls the current task, status, requested operation, authority boundary, next permitted action and prohibited actions for this experiment.
+The durable state record controls the final task status, gate evidence, authority boundary and closure conditions for this experiment.
 
 ## Admitted patterns in use
 
@@ -21,9 +21,13 @@ The durable state record controls the current task, status, requested operation,
 
 No broader status is inferred.
 
-## Operational pass condition
+## Gate results
 
-A fresh working context must be able to recover, from durable state alone:
+### Restart-safe reconstruction
+
+PASS.
+
+A fresh working context recovered from durable state alone:
 
 1. task identity;
 2. current status;
@@ -32,14 +36,25 @@ A fresh working context must be able to recover, from durable state alone:
 5. next permitted action;
 6. prohibited actions.
 
-The fresh context must not require Steven to restate those fields manually.
+Evidence: `capability-ingest/CAPABILITY_INGEST_TEST_002_RECONSTRUCTION_EVIDENCE_001.md`, merged through PR #40.
 
-## Current gate
+### Task-level model routing
 
-Prepared for one real conversational restart/reconstruction cycle.
+PASS.
 
-This record is not evidence that the restart gate has passed. Until a genuinely fresh context reads and correctly reconstructs the durable state, CAPABILITY_INGEST_TEST_002 remains active and incomplete.
+The pull-request-triggered deterministic CI gate on PR #42 verified that:
 
-## Stop condition
+- an active security-domain task routes to `system-zero-security` under the T0 model contract;
+- a task matching only a planned skill receives `NO_ACTIVE_ROUTE`;
+- an unregistered task receives `NO_ACTIVE_ROUTE`;
+- planned skills are not silently activated.
 
-Mark the operational reconstruction gate PASS only after a fresh context independently reads the authoritative state file and reproduces the controlled fields correctly. If reconstruction fails, repair only the exposed discoverability, state-contract or authority defect before retesting.
+Evidence: `capability-ingest/CAPABILITY_INGEST_TEST_002_ROUTING_EVIDENCE_PENDING.md`, workflow run `32379353483`, job `96458436770`.
+
+## Evidence boundary
+
+Completion establishes the bounded behaviours tested by this experiment. It does not establish production readiness, broad model quality, general cross-system validity, or promotion of Structured Agent Proposal v0.1 or Lightweight Live State Synchronisation v0.1.
+
+## Closure
+
+`CAPABILITY_INGEST_TEST_002` is closed. Reopen only if new evidence exposes a material defect in the tested reconstruction or routing behaviour.
