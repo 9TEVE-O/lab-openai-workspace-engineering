@@ -1,41 +1,43 @@
-# AI Workflow Control Review Toolkit v0.1 — Proof Record
+# AI Workflow Control Review Toolkit v0.1 — Evidence Gap Record
 
 ## Status
 
-Pilot tested / approved internal / client-style tested.
+GAP — the previously recorded validation and approval claims are not traceable to a durable repository evidence record.
 
-## Purpose
+## Decision
 
-Record the validation boundary for the AI Workflow Control Review Toolkit v0.1 without upgrading it into a production or compliance claim.
+Do not treat the toolkit as pilot tested, internally approved, client-style tested or admitted in repository canon until the supporting evidence is attached and reviewed.
 
-## Validated workflow classes
+This corrects the status introduced through PR #35. The correction concerns repository evidence and authority. It does not prove that testing or review did not occur outside the repository.
 
-The available project record documents validation across:
+## Missing evidence
 
-- AI consulting intake to review;
-- document to decision / RAG;
-- client-style workflow review;
-- review-gate behaviour.
+The current repository does not identify:
 
-## What this supports
+- the canonical source or input used for each claimed validation exercise;
+- the exact task, test plan or acceptance criteria;
+- the output or observed test result;
+- the review decision, decision owner and review date;
+- the limitations and unresolved failures recorded at the time of review.
 
-Within the recorded internal scope, the toolkit can be treated as a tested review method for examining workflow controls, evidence, gate state and recommended remediation.
+Without those records, another reviewer cannot reconstruct what happened, why the status was granted or what evidence supported the decision.
 
-## What this does not support
+## Current treatment
 
-This record does not establish:
+Hold the toolkit outside admitted capability status.
 
-- production readiness;
-- hosted-service readiness;
-- regulatory compliance;
-- cybersecurity assurance;
-- universal validity across all AI workflows;
-- external market validation.
+The existing `workflow-audit` skill and related materials may be inspected as contextual references, but their presence does not supply the missing evidence for this toolkit's former status claim.
 
-## Evidence discipline
+## Reinstatement gate
 
-A successful pilot or client-style simulation supports the bounded internal claim only. New workflow classes, material structural changes or broader claims require their own validation.
+The tested or approved status may be reinstated only through a reviewed change that:
 
-## Repository use
+1. attaches or durably references the missing evidence;
+2. states the precise validation scope and acceptance criteria;
+3. records the observed results and limitations;
+4. identifies the human review decision and authority;
+5. distinguishes bounded internal validation from production, compliance, cybersecurity or market claims.
 
-This proof record should be read alongside the existing `workflow-audit` skill and related proof-pack material. It extends the evidence base; it does not replace the existing workflow-audit controls.
+## Stop condition
+
+Close this gap only when another reviewer can inspect the source, task, output, decision and limitations without relying on chat memory or an unsupported status statement.
