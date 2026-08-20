@@ -64,13 +64,13 @@ The pull request was mergeable and was squash-merged only after the PR workflow 
 
 ## Result
 
-### Structured Agent Proposal v0.1
+### Structured Agent Proposal result
 
 PASS for bounded internal use in the tested host architecture.
 
 Evidence supports promotion from `candidate cross-project pattern` to `admitted — bounded internal use`, subject to the existing authority boundary and limitations recorded in the Intelligence Tool Library Register.
 
-### Lightweight Live State Synchronisation v0.1
+### Lightweight Live State Synchronisation result
 
 PASS for bounded internal use in the tested host architecture.
 
