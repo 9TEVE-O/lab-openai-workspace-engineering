@@ -1,0 +1,128 @@
+name: Bun build evidence 001
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/bun-build-evidence-001.yml'
+      - 'research/experiments/bun-build-evidence-001/**'
+      - 'research/technology-extractions/bun-1.4-capability-extraction.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-evidence:
+    name: Bun machine-readable build evidence
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Install Bun 1.4.0 for experiment only
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install --global bun@1.4.0
+          bun --version
+          test "$(bun --version)" = "1.4.0"
+
+      - name: Build baseline with JSON and Markdown evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence/baseline/dist evidence/candidate/dist
+          bun build research/experiments/bun-build-evidence-001/baseline/index.ts \
+            --outdir evidence/baseline/dist \
+            --metafile evidence/baseline/meta.json \
+            --metafile-md evidence/baseline/meta.md
+          test -s evidence/baseline/meta.json
+          test -s evidence/baseline/meta.md
+
+      - name: Build candidate with JSON and Markdown evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          bun build research/experiments/bun-build-evidence-001/candidate/index.ts \
+            --outdir evidence/candidate/dist \
+            --metafile evidence/candidate/meta.json \
+            --metafile-md evidence/candidate/meta.md
+          test -s evidence/candidate/meta.json
+          test -s evidence/candidate/meta.md
+
+      - name: Validate known dependency graph delta
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY' | tee evidence/graph-summary.txt
+          import json
+          from pathlib import Path
+
+          baseline = json.loads(Path('evidence/baseline/meta.json').read_text())
+          candidate = json.loads(Path('evidence/candidate/meta.json').read_text())
+
+          b_inputs = sorted(baseline['inputs'])
+          c_inputs = sorted(candidate['inputs'])
+          added = sorted(set(c_inputs) - set(b_inputs))
+
+          audit = [p for p in c_inputs if p.endswith('/audit.ts') or p.endswith('audit.ts')]
+          if len(audit) != 1:
+              raise SystemExit(f'expected exactly one candidate audit.ts input, got {audit}')
+          if any(p.endswith('/audit.ts') or p.endswith('audit.ts') for p in b_inputs):
+              raise SystemExit('baseline unexpectedly contains audit.ts')
+          if len(c_inputs) != len(b_inputs) + 1:
+              raise SystemExit(f'expected one added input: baseline={len(b_inputs)} candidate={len(c_inputs)}')
+
+          b_bytes = sum(meta['bytes'] for meta in baseline['outputs'].values())
+          c_bytes = sum(meta['bytes'] for meta in candidate['outputs'].values())
+
+          print(f'baseline_input_count={len(b_inputs)}')
+          print(f'candidate_input_count={len(c_inputs)}')
+          print(f'added_inputs={added}')
+          print(f'baseline_output_bytes={b_bytes}')
+          print(f'candidate_output_bytes={c_bytes}')
+          print(f'output_delta_bytes={c_bytes - b_bytes}')
+          PY
+
+      - name: Assert Markdown report exposes structural delta
+        shell: bash
+        run: |
+          set -euo pipefail
+          ! grep -q 'audit.ts' evidence/baseline/meta.md
+          grep -q 'audit.ts' evidence/candidate/meta.md
+          grep -Eq 'core.ts|index.ts' evidence/baseline/meta.md
+          grep -Eq 'core.ts|index.ts' evidence/candidate/meta.md
+
+          echo '--- BASELINE BUILD EVIDENCE START ---'
+          cat evidence/baseline/meta.md
+          echo '--- BASELINE BUILD EVIDENCE END ---'
+          echo '--- CANDIDATE BUILD EVIDENCE START ---'
+          cat evidence/candidate/meta.md
+          echo '--- CANDIDATE BUILD EVIDENCE END ---'
+
+      - name: Verify built outputs execute
+        shell: bash
+        run: |
+          set -euo pipefail
+          bun evidence/baseline/dist/index.js > evidence/baseline/result.txt
+          bun evidence/candidate/dist/index.js > evidence/candidate/result.txt
+          grep -qx 'evidence record' evidence/baseline/result.txt
+          grep -qx 'evidence record|audit:v1' evidence/candidate/result.txt
+
+      - name: Write durable experiment summary
+        shell: bash
+        run: |
+          set -euo pipefail
+          {
+            echo '# BUN_BUILD_EVIDENCE_001 execution summary'
+            echo
+            echo '- Bun: 1.4.0'
+            echo "- Graph comparison: $(tr '\n' ' ' < evidence/graph-summary.txt)"
+            echo '- JSON build evidence: PASS'
+            echo '- Markdown build evidence: PASS'
+            echo '- Known audit.ts dependency discoverable: PASS'
+            echo '- Built output execution checks: PASS'
+            echo '- Runtime/package-manager migration: NONE'
+          } | tee evidence/SUMMARY.md
