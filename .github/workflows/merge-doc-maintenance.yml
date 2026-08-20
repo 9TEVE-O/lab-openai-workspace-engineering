@@ -1,0 +1,103 @@
+name: Merge-triggered documentation maintenance
+
+on:
+  pull_request:
+    types: [closed]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: merge-doc-maintenance-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  maintain-docs:
+    if: >-
+      github.event.pull_request.merged == true &&
+      github.event.pull_request.base.ref == 'main' &&
+      !startsWith(github.event.pull_request.title, 'docs(maintenance):')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out merged main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Capture merged PR changed files
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          gh api --paginate \
+            -H 'Accept: application/vnd.github+json' \
+            "/repos/${REPO}/pulls/${PR_NUMBER}/files?per_page=100" \
+            --jq '.[].filename' > /tmp/changed-files.txt
+          echo 'Changed files:'
+          cat /tmp/changed-files.txt
+
+      - name: Prepare bounded event input
+        env:
+          EVENT_PATH: ${{ github.event_path }}
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const event = JSON.parse(fs.readFileSync(process.env.EVENT_PATH, 'utf8'));
+          const changed = fs.readFileSync('/tmp/changed-files.txt', 'utf8')
+            .split('\n').map(s => s.trim()).filter(Boolean);
+          const marker = `\n\n<!-- doc-maintenance-changed-files:${changed.join(',')} -->`;
+          event.pull_request.body = `${event.pull_request.body || ''}${marker}`;
+          fs.writeFileSync('/tmp/maintenance-event.json', JSON.stringify(event, null, 2));
+          NODE
+
+      - name: Generate and validate structured maintenance proposal
+        run: |
+          node capability-ingest/merge-doc-maintenance.js \
+            --event /tmp/maintenance-event.json \
+            --proposal-out /tmp/maintenance-proposal.json \
+            --apply
+          cat /tmp/maintenance-proposal.json
+
+      - name: Detect no-op
+        id: diff
+        run: |
+          if git diff --quiet -- README.md REPO-MAP.md NEXT-ACTION.md; then
+            echo 'changed=false' >> "$GITHUB_OUTPUT"
+            echo 'No documentation maintenance required.'
+          else
+            echo 'changed=true' >> "$GITHUB_OUTPUT"
+            git diff --check
+            git diff -- README.md REPO-MAP.md NEXT-ACTION.md
+          fi
+
+      - name: Run repository checks
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          npx --yes markdownlint-cli2 '**/*.md' '#node_modules'
+
+      - name: Create maintenance branch and pull request
+        if: steps.diff.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SOURCE_PR: ${{ github.event.pull_request.number }}
+          SOURCE_SHA: ${{ github.event.pull_request.merge_commit_sha }}
+          REPO: ${{ github.repository }}
+        run: |
+          branch="automation/docs-after-pr-${SOURCE_PR}"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git switch -c "$branch"
+          git add README.md REPO-MAP.md NEXT-ACTION.md
+          git commit -m "docs(maintenance): refresh after PR #${SOURCE_PR}"
+          git push origin "$branch"
+
+          gh pr create \
+            --repo "$REPO" \
+            --base main \
+            --head "$branch" \
+            --title "docs(maintenance): refresh after PR #${SOURCE_PR}" \
+            --body "Automated bounded documentation-maintenance proposal after merged PR #${SOURCE_PR}.\n\nAuthority/status transitions are prohibited by the host validator. This PR requires human review and is not auto-merged.\n\nSource merge commit: ${SOURCE_SHA}"
