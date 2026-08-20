@@ -2,7 +2,7 @@
 
 ## Status
 
-REVISE — deterministic gateway-control behaviour is implemented and locally reproducible, but live cross-model/provider invariance remains unverified.
+REVISE — deterministic gateway-control behaviour is implemented and repository CI has passed, but live cross-model/provider invariance remains unverified.
 
 ## Canonical experiment
 
@@ -44,6 +44,24 @@ deterministic_gateway_controls = PASS
 mock_model_adapter_invariance = PASS
 live_model_provider_invariance = NOT_RUN
 ```
+
+## Repository CI evidence
+
+Draft PR: `#54` — `Implement bounded AI gateway control harness`
+
+Head commit before this evidence-only update: `8f91f89ade9cc7632e5794d5a952081155aff68f`
+
+GitHub Actions run `32402431821` completed successfully for `AI_GATEWAY_CONTROL_TEST_001 deterministic gate`.
+
+The same PR head also passed:
+
+- Markdown lint;
+- HTML lint;
+- Lightweight security checks;
+- Secret scan;
+- System Zero registry consistency.
+
+These passing checks verify the deterministic repository implementation only. They do not satisfy the live model/provider substitution condition.
 
 ## Acceptance-gate determination
 
