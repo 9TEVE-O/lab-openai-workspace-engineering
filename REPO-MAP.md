@@ -120,3 +120,5 @@ They do not create a separate governance doctrine or Tool Bank. Host-specific im
 ## Review rule
 
 A file belongs in this repo only if it helps convert scattered AI work into a reusable, reviewable, evidence-backed workflow. Presence is storage; status and authority must still be established through the applicable control record.
+
+<!-- merge-doc-maintenance:last-source-pr=54;sha=53efcfe63cdccc86e8bdd4bbb181607044639205 -->
