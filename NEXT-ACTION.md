@@ -87,3 +87,5 @@ What evidence supports this status, what is the authority boundary, and what cla
 ```
 
 If the answer is unclear, hold the artefact outside canon.
+
+<!-- merge-doc-maintenance:last-source-pr=52;sha=ae8b3c04730516d599ce561c58366012881c6550 -->
