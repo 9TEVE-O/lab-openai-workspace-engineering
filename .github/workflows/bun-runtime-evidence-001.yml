@@ -20,20 +20,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
-      - name: Record Node baseline
+      - name: Record Node correctness baseline
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p evidence/node evidence/bun evidence/profile
+          mkdir -p evidence/node evidence/bun evidence/profile evidence/compare
           node --version | tee evidence/node/version.txt
-          /usr/bin/time -f 'wall_seconds=%e\nmax_rss_kb=%M' \
-            -o evidence/node/resources.txt \
-            node research/experiments/bun-runtime-evidence-001/workload.mjs \
-            > evidence/node/result.txt \
-            2> evidence/node/stderr.txt
-          cat evidence/node/result.txt
-          cat evidence/node/stderr.txt
-          cat evidence/node/resources.txt
+          node research/experiments/bun-runtime-evidence-001/workload-baseline.mjs \
+            > evidence/node/baseline-result.txt \
+            2> evidence/node/baseline-stderr.txt
+          node research/experiments/bun-runtime-evidence-001/workload.mjs \
+            > evidence/node/candidate-result.txt \
+            2> evidence/node/candidate-stderr.txt
+          diff -u evidence/node/baseline-result.txt evidence/node/candidate-result.txt
+          cat evidence/node/candidate-result.txt
 
       - name: Install Bun 1.4.0 for experiment only
         shell: bash
@@ -43,65 +43,109 @@ jobs:
           bun --version | tee evidence/bun/version.txt
           test "$(bun --version)" = "1.4.0"
 
-      - name: Run same workload under Bun
+      - name: Compare baseline and candidate on same Bun runner
         shell: bash
         run: |
           set -euo pipefail
-          /usr/bin/time -f 'wall_seconds=%e\nmax_rss_kb=%M' \
-            -o evidence/bun/resources.txt \
-            bun research/experiments/bun-runtime-evidence-001/workload.mjs \
-            > evidence/bun/result.txt \
-            2> evidence/bun/stderr.txt
-          diff -u evidence/node/result.txt evidence/bun/result.txt
-          cat evidence/bun/result.txt
-          cat evidence/bun/stderr.txt
-          cat evidence/bun/resources.txt
+          : > evidence/compare/baseline-times.txt
+          : > evidence/compare/candidate-times.txt
 
-      - name: Generate Bun Markdown CPU profile
+          for run in 1 2 3 4 5; do
+            bun research/experiments/bun-runtime-evidence-001/workload-baseline.mjs \
+              > evidence/compare/baseline-result.txt \
+              2>> evidence/compare/baseline-times.txt
+            bun research/experiments/bun-runtime-evidence-001/workload.mjs \
+              > evidence/compare/candidate-result.txt \
+              2>> evidence/compare/candidate-times.txt
+            diff -u evidence/compare/baseline-result.txt evidence/compare/candidate-result.txt
+          done
+
+          diff -u evidence/node/candidate-result.txt evidence/compare/candidate-result.txt
+
+          python - <<'PY' | tee evidence/compare/summary.txt
+          import statistics
+          from pathlib import Path
+
+          def read_times(path):
+              values = []
+              for line in Path(path).read_text().splitlines():
+                  if line.startswith('elapsed_ms='):
+                      values.append(float(line.split('=', 1)[1]))
+              if len(values) != 5:
+                  raise SystemExit(f'expected 5 timings in {path}, got {len(values)}')
+              return values
+
+          baseline = read_times('evidence/compare/baseline-times.txt')
+          candidate = read_times('evidence/compare/candidate-times.txt')
+          baseline_median = statistics.median(baseline)
+          candidate_median = statistics.median(candidate)
+          delta_pct = ((candidate_median - baseline_median) / baseline_median) * 100
+
+          print(f'baseline_ms={baseline}')
+          print(f'candidate_ms={candidate}')
+          print(f'baseline_median_ms={baseline_median:.3f}')
+          print(f'candidate_median_ms={candidate_median:.3f}')
+          print(f'candidate_delta_pct={delta_pct:.2f}')
+          PY
+
+      - name: Generate baseline and candidate Markdown CPU profiles
         shell: bash
         run: |
           set -euo pipefail
-          profile_file="evidence/profile/runtime-profile.md"
+          baseline_profile="evidence/profile/baseline-profile.md"
+          candidate_profile="evidence/profile/candidate-profile.md"
+
           bun --cpu-prof-md \
             --cpu-prof-dir ./evidence/profile \
-            --cpu-prof-name runtime-profile.md \
+            --cpu-prof-name baseline-profile.md \
+            research/experiments/bun-runtime-evidence-001/workload-baseline.mjs \
+            > evidence/profile/baseline-result.txt \
+            2> evidence/profile/baseline-stderr.txt
+
+          bun --cpu-prof-md \
+            --cpu-prof-dir ./evidence/profile \
+            --cpu-prof-name candidate-profile.md \
             research/experiments/bun-runtime-evidence-001/workload.mjs \
-            > evidence/profile/result.txt \
-            2> evidence/profile/stderr.txt
+            > evidence/profile/candidate-result.txt \
+            2> evidence/profile/candidate-stderr.txt
 
-          diff -u evidence/node/result.txt evidence/profile/result.txt
-          test -s "$profile_file"
+          diff -u evidence/profile/baseline-result.txt evidence/profile/candidate-result.txt
+          test -s "$baseline_profile"
+          test -s "$candidate_profile"
 
-          echo "profile_file=$profile_file"
-          sha256sum "$profile_file"
-          echo '--- PROFILE START ---'
-          cat "$profile_file"
-          echo '--- PROFILE END ---'
+          echo '--- BASELINE PROFILE START ---'
+          cat "$baseline_profile"
+          echo '--- BASELINE PROFILE END ---'
+          echo '--- CANDIDATE PROFILE START ---'
+          cat "$candidate_profile"
+          echo '--- CANDIDATE PROFILE END ---'
 
-      - name: Assert profile is agent-inspectable
+      - name: Assert profiles are agent-inspectable
         shell: bash
         run: |
           set -euo pipefail
-          profile_file="evidence/profile/runtime-profile.md"
-          grep -q 'Hot Functions' "$profile_file"
-          grep -Eq 'scoreCandidates|mix32|workload\.mjs' "$profile_file"
+          for profile_file in evidence/profile/baseline-profile.md evidence/profile/candidate-profile.md; do
+            grep -q 'Hot Functions' "$profile_file"
+            grep -Eq 'scoreCandidates|mix32|workload' "$profile_file"
+          done
 
       - name: Write durable experiment summary
         shell: bash
         run: |
           set -euo pipefail
-          profile_file="evidence/profile/runtime-profile.md"
+          baseline_profile="evidence/profile/baseline-profile.md"
+          candidate_profile="evidence/profile/candidate-profile.md"
           {
             echo '# BUN_RUNTIME_EVIDENCE_001 execution summary'
             echo
             echo "- Node: $(cat evidence/node/version.txt)"
             echo "- Bun: $(cat evidence/bun/version.txt)"
-            echo "- Deterministic output: $(cat evidence/bun/result.txt)"
-            echo "- Node resources: $(tr '\n' ' ' < evidence/node/resources.txt)"
-            echo "- Bun resources: $(tr '\n' ' ' < evidence/bun/resources.txt)"
-            echo "- Profile SHA-256: $(sha256sum "$profile_file" | awk '{print $1}')"
+            echo "- Deterministic output: $(cat evidence/compare/candidate-result.txt)"
+            echo "- Timing comparison: $(tr '\n' ' ' < evidence/compare/summary.txt)"
+            echo "- Baseline profile SHA-256: $(sha256sum "$baseline_profile" | awk '{print $1}')"
+            echo "- Candidate profile SHA-256: $(sha256sum "$candidate_profile" | awk '{print $1}')"
             echo '- Correctness parity: PASS'
-            echo '- Markdown profile generated: PASS'
+            echo '- Markdown profiles generated: PASS'
             echo '- Agent-inspectable hotspot assertion: PASS'
           } | tee evidence/SUMMARY.md
 
