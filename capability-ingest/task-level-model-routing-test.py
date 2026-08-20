@@ -45,6 +45,7 @@ def route_task(task_domains: set[str], registry: dict) -> dict:
 def main() -> int:
     registry = load_registry()
 
+    # Pull-request execution marker; routing behaviour is intentionally unchanged.
     security = route_task({"authz", "agentic-permissions"}, registry)
     assert security == {
         "decision": "ROUTE",
