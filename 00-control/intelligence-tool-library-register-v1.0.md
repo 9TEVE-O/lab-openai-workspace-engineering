@@ -2,7 +2,7 @@
 
 ## Status
 
-Register structure recorded. This document is not evidence that any listed item has passed admission.
+Register structure recorded. This document is not evidence that any listed item has passed admission unless an item below explicitly records an evidence-backed admission decision.
 
 ## Purpose
 
@@ -57,27 +57,29 @@ The exact state must be preserved rather than inferred from file location or rec
 
 Decision: do not treat this item as admitted. Admission requires every field above to be completed, the supporting evidence to be attached or durably referenced, and a human review decision to be recorded.
 
-## Governed reusable implementation-pattern candidates
+## Governed reusable implementation patterns
 
-The following four patterns were retained from the Site Studio source review because they add implementation value without creating a new governance doctrine. They are registered here as **candidate reusable implementation patterns** pending implementation-level validation in a concrete host system.
+The following four patterns were retained from the Site Studio source review because they add implementation value without creating a new governance doctrine. Status is recorded per item and must not be generalised across the group.
 
 ### Shared Authoritative State Surface v0.1
 
-- Status: candidate.
-- Intended use: expose the same current workflow state to the human interface and agent logic so both act against one inspectable source of truth.
-- Evidence basis: source-pattern extraction and architectural review; no host-system runtime validation recorded here.
+- Status: admitted — bounded internal use.
+- Intended use: expose the same current workflow task, status, requested operation and authority boundary to human and agent readers from one durable inspectable source of truth, including after conversational restart.
+- Evidence basis: `capability-ingest/SHARED_STATE_DURABLE_REQUEST_TEST_001.md` and executable harness `capability-ingest/shared-state-durable-request-test.js`; deterministic test PASS recorded 2026-08-20.
 - Authority boundary: does not define workflow policy, approval rights or canon. Existing host-system authority remains controlling.
-- Limitation: a shared surface is not sufficient if the underlying state store permits uncontrolled mutation.
-- Promotion trigger: deterministic host-system test demonstrates consistent human/agent reads and controlled writes.
+- Material limitations: admission does not establish distributed consistency, concurrent-write safety, crash-safe transactions, cryptographic actor identity, production readiness, compliance, cross-host portability or commercial validity.
+- Owner or human decision authority: consequential permissions and promotion remain human-owned under the host system's existing controls.
+- Revision or retirement trigger: materially broader use, changed state contract, changed mutation boundary or evidence of inconsistent reconstruction requires retest and review.
 
 ### Durable Human-to-Agent Work Request v0.1
 
-- Status: candidate.
-- Intended use: persist explicit requested operations as durable workflow state rather than relying on conversational memory.
-- Evidence basis: source-pattern extraction and architectural review; no host-system runtime validation recorded here.
+- Status: admitted — bounded internal use.
+- Intended use: persist an explicit work request and its lifecycle-relevant fields as durable workflow state so a fresh human or agent session can reconstruct the request without relying on conversational memory.
+- Evidence basis: `capability-ingest/SHARED_STATE_DURABLE_REQUEST_TEST_001.md` and executable harness `capability-ingest/shared-state-durable-request-test.js`; deterministic test PASS recorded 2026-08-20, including rejection of an unauthorised mutation and acceptance of an authorised mutation.
 - Authority boundary: the stored request records user intent but does not itself authorise actions outside the host system's existing permissions and approval gates.
-- Limitation: stale, superseded or completed requests require explicit lifecycle handling.
-- Promotion trigger: host-system test demonstrates persistence, status transitions and correct refusal of unauthorised operations.
+- Material limitations: stale, superseded or completed request lifecycle handling beyond the tested transition remains host-specific; admission does not establish production security, distributed consistency or cross-host portability.
+- Owner or human decision authority: consequential permissions remain human-owned under the host system's existing controls.
+- Revision or retirement trigger: materially broader lifecycle states, actor model, permissions model or host architecture requires retest and review.
 
 ### Structured Agent Proposal v0.1
 
@@ -99,10 +101,10 @@ The following four patterns were retained from the Site Studio source review bec
 
 ## Site Studio placement rule
 
-These four items belong in this existing register as reusable implementation-pattern candidates. They are not a separate Tool Bank, product, governance framework or authority layer.
+These four items belong in this existing register as reusable implementation patterns. They are not a separate Tool Bank, product, governance framework or authority layer.
 
 When implementation begins, apply them inside the relevant host repository under that repository's controlling architecture and gates. In `stevens-creative-software`, structured proposal/accept-reject behaviour already exists architecturally; the other patterns should be implemented only where they fill a demonstrated state-management or orchestration gap. This register remains the cross-project discovery and status record; host-specific code remains in the host repository.
 
 ## Control boundary
 
-This register is an authority map, not proof of correctness. A held item remains non-admitted even if it is implemented, stored elsewhere or repeatedly referenced. Candidate status means an item is discoverable and intentionally retained but has not yet earned admission. Admission for a stated use does not imply production readiness, regulatory compliance, external validation or commercial adoption.
+This register is an authority map, not proof of correctness. A held item remains non-admitted even if it is implemented, stored elsewhere or repeatedly referenced. Candidate status means an item is discoverable and intentionally retained but has not yet earned admission. Admission is bounded to the stated use and evidence basis and does not imply production readiness, regulatory compliance, external validation or commercial adoption.
