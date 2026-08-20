@@ -2,7 +2,7 @@
 
 ## Status
 
-Completed and approved.
+Register structure recorded. This document is not evidence that any listed item has passed admission.
 
 ## Purpose
 
@@ -12,11 +12,11 @@ Provide a governed register for reusable AI tools, methods and operators so that
 
 > Storage, repeated mentions and unversioned drafts do not create approval.
 
-A tool becomes admitted only when its status, version and intended use are explicit.
+A tool becomes admitted only when its status, version, intended use, evidence and authority boundary are explicit and reviewed.
 
 ## Minimum register fields
 
-Each admitted item should record:
+Each admitted item must record:
 
 - canonical name;
 - version;
@@ -41,14 +41,22 @@ Recommended states include:
 
 The exact state must be preserved rather than inferred from file location or recency.
 
-## Current admitted example
+## Current held entry
 
 ### AI Workflow Inspection Model v0.1
 
-Status: admitted.
+- Canonical name: AI Workflow Inspection Model
+- Version: v0.1
+- Status: held — incomplete admission record
+- Intended use: GAP — not recorded
+- Evidence or validation basis: GAP — no durable supporting record identified in the repository
+- Authority boundary: GAP — not recorded
+- Material limitations: GAP — not recorded
+- Owner or human decision authority: GAP — not recorded
+- Revision or retirement trigger: GAP — not recorded
 
-The admitted status applies to the registered model and stated use. It does not automatically approve derivative versions, broader claims or unrelated implementations.
+Decision: do not treat this item as admitted. Admission requires every field above to be completed, the supporting evidence to be attached or durably referenced, and a human review decision to be recorded.
 
 ## Control boundary
 
-This register is an authority map, not proof of correctness. Admission means the item passed the applicable internal gate for its recorded use; it does not imply production readiness, regulatory compliance, external validation or commercial adoption.
+This register is an authority map, not proof of correctness. A held item remains non-admitted even if it is implemented, stored elsewhere or repeatedly referenced. Admission for a stated use does not imply production readiness, regulatory compliance, external validation or commercial adoption.
