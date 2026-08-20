@@ -1,0 +1,26 @@
+name: AI_GATEWAY_CONTROL_TEST_001 deterministic gate
+
+on:
+  pull_request:
+    paths:
+      - 'capability-ingest/ai-gateway-control-test.js'
+      - 'capability-ingest/AI_GATEWAY_CONTROL_TEST_001_EVIDENCE_001.md'
+      - '.github/workflows/ai-gateway-control-test-001.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deterministic-gateway-control:
+    name: Deterministic gateway control harness
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Run bounded gateway control test
+        run: node capability-ingest/ai-gateway-control-test.js
