@@ -2,7 +2,7 @@
 
 ## Status
 
-**Candidate under validation.**
+**Mixed validation state: one validated for bounded use; three candidates under validation.**
 
 This record extracts only the parts of Bun 1.4 that add a genuinely useful capability or implementation pattern beyond the current authorised development architecture. Bun itself is not adopted as an architectural dependency by this record.
 
@@ -10,11 +10,13 @@ Source: Bun 1.4 release notes, 20 August 2026.
 
 ## Extraction boundary
 
-Do not treat release-note presence, implementation availability, benchmark claims or this record as proof that any Bun capability is production-ready or authorised for use. Each extracted item remains a candidate until a bounded test produces evidence.
+Do not treat release-note presence, implementation availability, benchmark claims or this record as proof that any Bun capability is production-ready or authorised for unrestricted use. Each extracted item must preserve its own validation status and authority boundary.
 
 ## Extracted capabilities
 
 ### 1. Machine-Readable Runtime Evidence
+
+**Status: PASS — validated for bounded use.**
 
 **Purpose:** expose measured runtime behaviour in a format that an AI agent can directly inspect and reason over.
 
@@ -43,13 +45,15 @@ execute workload
 
 **Authority boundary:** runtime evidence informs diagnosis; it does not authorise an agent to make consequential changes without the existing review, test and merge gates.
 
-**Validation test:** run the same bounded TypeScript workload under the current runtime and Bun 1.4, capture profiler evidence, ask an agent to identify one optimisation, apply only if authorised, then rerun the same test and compare correctness plus measured performance.
+**Validation result:** `BUN_RUNTIME_EVIDENCE_001` passed. Bun 1.4.0 generated source-specific Markdown CPU profiles that identified `scoreCandidates` as the dominant hotspot. One bounded loop-unrolling change preserved the exact deterministic output. Five same-run Bun measurements recorded a baseline median of 511.440 ms and candidate median of 267.829 ms, a 47.63% reduction for that synthetic workload. Baseline and candidate profiles remained directly agent-inspectable.
 
-**Pass condition:** the machine-readable profile materially improves diagnosis or verification without weakening existing test or authority boundaries.
+The performance result is workload-specific evidence, not a general Bun benchmark. The validated capability is the evidence-generating pattern, not a runtime-migration claim.
 
 ---
 
 ### 2. Enforced Runtime Resource Boundary
+
+**Status: Candidate under validation.**
 
 **Purpose:** translate declared process-resource requirements into enforceable execution constraints.
 
@@ -81,6 +85,8 @@ capability resource declaration
 
 ### 3. Browser Execution Adapter
 
+**Status: Candidate under validation.**
+
 **Purpose:** provide inspectable, bounded headless-browser execution as a registered capability rather than as arbitrary browser automation.
 
 **Bun 1.4 implementation example:** `Bun.WebView`, including browser navigation, DOM interaction, native input, console capture and browser-state handling through WebKit or Chrome/Chromium interfaces.
@@ -108,6 +114,8 @@ registered browser task
 ---
 
 ### 4. Machine-Readable Build Evidence
+
+**Status: Candidate under validation.**
 
 **Purpose:** expose build topology, dependency chains and bundle contribution as inspectable evidence for deterministic and AI-assisted analysis.
 
@@ -158,15 +166,15 @@ The following Bun 1.4 additions are not promoted into separate capability record
 
 Do not migrate an active repository to Bun as the first test.
 
-Run the four candidates independently, in this order:
+Current sequence:
 
-1. Machine-Readable Runtime Evidence
-2. Machine-Readable Build Evidence
-3. Enforced Runtime Resource Boundary
-4. Browser Execution Adapter
+1. Machine-Readable Runtime Evidence — **PASS, bounded use validated**
+2. Machine-Readable Build Evidence — candidate
+3. Enforced Runtime Resource Boundary — candidate
+4. Browser Execution Adapter — candidate
 
-The first two are low-risk, read-mostly evidence experiments. Resource containment and browser execution alter host execution behaviour and therefore require stronger isolation and acceptance criteria.
+The next test should be Machine-Readable Build Evidence because it remains a low-risk, read-mostly evidence experiment. Resource containment and browser execution alter host execution behaviour and therefore require stronger isolation and acceptance criteria.
 
 ## Stop condition
 
-This extraction is complete when the four candidate records exist and remain clearly separated from adoption. No architecture migration, runtime replacement or production-readiness claim is authorised by this record.
+The extraction itself is complete. Validation proceeds capability by capability. No architecture migration, runtime replacement or production-readiness claim is authorised by this record.
