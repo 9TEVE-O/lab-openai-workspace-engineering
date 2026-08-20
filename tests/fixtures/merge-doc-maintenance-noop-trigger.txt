@@ -1,0 +1,3 @@
+Purpose: deterministic no-op trigger fixture for MERGE_TRIGGERED_REPOSITORY_MAINTENANCE_TEST_001.
+
+This file intentionally lives outside the workflow's documentation-target mapping. Merging the PR that introduces it should trigger the maintenance workflow while producing no documentation proposal and no maintenance pull request.
