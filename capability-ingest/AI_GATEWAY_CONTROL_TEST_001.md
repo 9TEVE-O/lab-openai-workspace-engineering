@@ -62,24 +62,31 @@ FAIL or REVISE if any control depends only on prompt compliance, hidden model st
 These are supporting reference, not independently active projects.
 
 ### SESSION_TURN_EVENT_MODEL
+
 Treat the session as the durable container, each turn as a bounded execution unit, events as observable occurrences, and artefacts as durable outputs. This supports replay, evaluation, debugging and provenance.
 
 ### JIT_RESOURCE_RESOLUTION
+
 Capability availability and capability activation are separate. Resolve only the models, tools, skills, sandbox and context required for the current turn where practical.
 
 ### PROVIDER_NEUTRAL_STATE
+
 Keep evidence references, decisions, approvals, artefacts and task state in canonical application state. Treat provider-specific conversation/compaction state as replaceable runtime state.
 
 ### STRUCTURED_AGENT_UI_PATTERN
+
 Agents should emit structured semantic events such as approval_required, tool_started, tool_completed, artefact_created and turn_completed. Presentation belongs to the application/UI layer.
 
 ### AGENT_VS_REQUEST_REPLY
+
 Use an agent only when a stateful, interruptible, multi-step execution loop earns its complexity. Use bounded request/reply for deterministic extraction, classification or structured model judgements.
 
 ### LOCAL_TO_HOSTED_PROGRESSION
+
 Prove behaviour locally with minimal infrastructure first. Introduce production persistence, distributed infrastructure, authentication and deployment complexity only after the capability passes its behavioural gate.
 
 ### VERSIONED_SKILLS
+
 Reusable AI capabilities should become identifiable, versioned and traceable instruction/code packages rather than existing only as prose in conversation memory.
 
 ## Evidence status
