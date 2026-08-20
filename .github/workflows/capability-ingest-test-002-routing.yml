@@ -1,0 +1,23 @@
+name: CAPABILITY_INGEST_TEST_002 routing gate
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'capability-ingest/task-level-model-routing-test.py'
+      - 'system-zero/registry.json'
+      - '.github/workflows/capability-ingest-test-002-routing.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  routing-gate:
+    name: Deterministic task-level model routing
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Run bounded routing test
+        run: python3 capability-ingest/task-level-model-routing-test.py
