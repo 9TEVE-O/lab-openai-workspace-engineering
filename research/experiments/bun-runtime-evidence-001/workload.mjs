@@ -9,10 +9,28 @@ function mix32(value) {
 
 function scoreCandidates(iterations) {
   let score = 0;
-  for (let i = 0; i < iterations; i += 1) {
+  let i = 0;
+  const unrolledLimit = iterations - (iterations % 4);
+
+  for (; i < unrolledLimit; i += 4) {
+    let mixed = mix32(i ^ score);
+    score = (score + (mixed & 0xffff)) >>> 0;
+
+    mixed = mix32((i + 1) ^ score);
+    score = (score + (mixed & 0xffff)) >>> 0;
+
+    mixed = mix32((i + 2) ^ score);
+    score = (score + (mixed & 0xffff)) >>> 0;
+
+    mixed = mix32((i + 3) ^ score);
+    score = (score + (mixed & 0xffff)) >>> 0;
+  }
+
+  for (; i < iterations; i += 1) {
     const mixed = mix32(i ^ score);
     score = (score + (mixed & 0xffff)) >>> 0;
   }
+
   return score;
 }
 
