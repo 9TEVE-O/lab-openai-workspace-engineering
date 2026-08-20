@@ -61,16 +61,15 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          profile_file="evidence/profile/runtime-profile.md"
           bun --cpu-prof-md \
             --cpu-prof-dir ./evidence/profile \
+            --cpu-prof-name runtime-profile.md \
             research/experiments/bun-runtime-evidence-001/workload.mjs \
             > evidence/profile/result.txt \
             2> evidence/profile/stderr.txt
 
           diff -u evidence/node/result.txt evidence/profile/result.txt
-
-          profile_file="$(find evidence/profile -maxdepth 1 -type f -name '*.cpuprofile.md' -print -quit)"
-          test -n "$profile_file"
           test -s "$profile_file"
 
           echo "profile_file=$profile_file"
@@ -83,7 +82,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          profile_file="$(find evidence/profile -maxdepth 1 -type f -name '*.cpuprofile.md' -print -quit)"
+          profile_file="evidence/profile/runtime-profile.md"
           grep -q 'Hot Functions' "$profile_file"
           grep -Eq 'scoreCandidates|mix32|workload\.mjs' "$profile_file"
 
@@ -91,7 +90,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          profile_file="$(find evidence/profile -maxdepth 1 -type f -name '*.cpuprofile.md' -print -quit)"
+          profile_file="evidence/profile/runtime-profile.md"
           {
             echo '# BUN_RUNTIME_EVIDENCE_001 execution summary'
             echo
