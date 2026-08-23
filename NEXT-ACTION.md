@@ -88,4 +88,4 @@ What evidence supports this status, what is the authority boundary, and what cla
 
 If the answer is unclear, hold the artefact outside canon.
 
-<!-- merge-doc-maintenance:last-source-pr=44;sha=b2ffccf6966422c27938bea45634873120215b0b -->
+<!-- merge-doc-maintenance:last-source-pr=48;sha=abcbaa6275df6501b6a16e40b6f8bc474ce73b5d -->
