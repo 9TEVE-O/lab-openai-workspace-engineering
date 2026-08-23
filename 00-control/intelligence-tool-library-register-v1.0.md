@@ -83,27 +83,29 @@ The following four patterns were retained from the Site Studio source review bec
 
 ### Structured Agent Proposal v0.1
 
-- Status: candidate cross-project pattern.
+- Status: admitted — bounded internal use.
 - Intended use: represent proposed agent changes as current state, proposed state, reason, diff and accept/reject decision so consequential mutation remains inspectable and human-owned where required.
-- Evidence basis: source-pattern extraction and architectural review. `stevens-creative-software` already contains a compatible proposal → preview → accept/reject → project-version architecture, but that is not treated here as cross-project runtime validation.
-- Authority boundary: proposal generation cannot bypass existing human decision rights, evidence gates or change-control rules.
-- Limitation: proposal structure does not prove the proposed change is correct.
-- Promotion trigger: host-system test demonstrates accurate diff generation, explicit decision capture and no mutation before acceptance where approval is required.
+- Evidence basis: `capability-ingest/SITE_STUDIO_PATTERN_VALIDATION_001.md`; bounded host-system implementation in `9TEVE-O/stevens-creative-software`; validation PR `#4`; GitHub Actions run `32401800419` completed successfully; merged commit `d7c3be851171d208ce1817969526462750b99608`.
+- Authority boundary: proposal generation cannot bypass existing human decision rights, evidence gates or change-control rules. Acceptance is a decision input to the controlled mutation path, not proof that the proposed change is correct.
+- Material limitations: admission is bounded to the tested host architecture and does not establish correctness of proposals, production readiness, cross-host portability, external validation or commercial validity.
+- Owner or human decision authority: consequential proposal acceptance/rejection remains human-owned where required by the host system.
+- Revision or retirement trigger: materially changed proposal schema, approval semantics, mutation path or host authority model requires retest and review.
 
 ### Lightweight Live State Synchronisation v0.1
 
-- Status: candidate.
-- Intended use: pair a controlled mutation boundary with event-driven UI refresh so local-first tools update visible state without hidden side channels or conversational-memory dependence.
-- Evidence basis: source-pattern extraction and architectural review; no host-system runtime validation recorded here.
-- Authority boundary: synchronisation transports state changes; it does not create permission to make them.
-- Limitation: event delivery, race conditions, restart recovery and stale clients require host-specific testing.
-- Promotion trigger: host-system test demonstrates authorised mutation, event propagation, restart consistency and stale-state detection.
+- Status: admitted — bounded internal use.
+- Intended use: pair a controlled mutation boundary with event-driven state refresh so local-first tools update visible state without hidden side channels or conversational-memory dependence.
+- Evidence basis: `capability-ingest/SITE_STUDIO_PATTERN_VALIDATION_001.md`; bounded host-system implementation in `9TEVE-O/stevens-creative-software`; validation PR `#4`; GitHub Actions run `32401800419` completed successfully; merged commit `d7c3be851171d208ce1817969526462750b99608`.
+- Authority boundary: synchronisation transports authorised state changes; it does not create permission to make them. The tested implementation enforces authorisation and revision-based stale-state rejection at the controlled mutation boundary.
+- Material limitations: admission is bounded to the tested local host architecture and does not establish distributed consistency, multi-process coordination, guaranteed network delivery, crash-safe transactions, cryptographic actor identity, production readiness, cross-host portability or commercial validity.
+- Owner or human decision authority: consequential permissions remain governed by the host system; event subscribers receive state but do not gain mutation authority.
+- Revision or retirement trigger: materially changed event transport, state revision model, persistence/restart strategy, actor/permission model or host architecture requires retest and review.
 
 ## Site Studio placement rule
 
 These four items belong in this existing register as reusable implementation patterns. They are not a separate Tool Bank, product, governance framework or authority layer.
 
-When implementation begins, apply them inside the relevant host repository under that repository's controlling architecture and gates. In `stevens-creative-software`, structured proposal/accept-reject behaviour already exists architecturally; the other patterns should be implemented only where they fill a demonstrated state-management or orchestration gap. This register remains the cross-project discovery and status record; host-specific code remains in the host repository.
+When implementation begins, apply them inside the relevant host repository under that repository's controlling architecture and gates. In `stevens-creative-software`, all four now have bounded internal validation evidence for their recorded use; broader adoption remains subject to the limitations and retest triggers above. This register remains the cross-project discovery and status record; host-specific code remains in the host repository.
 
 ## Control boundary
 
