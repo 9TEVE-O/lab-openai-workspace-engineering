@@ -31,24 +31,30 @@ Random chats
 05-build-checklists/
 06-prototypes/
 capability-ingest/
+research/
+  technology-extractions/
+  experiments/
 system-zero/
+demos/
 docs/
 scripts/
 ```
 
-This is a discovery map, not a claim that every stored item is active or admitted.
+This is a discovery map, not a claim that every stored item is active, admitted or implemented in every host system.
 
 ## Authoritative discovery rule
 
 When the question is “what capability/tool already exists?” or “where should this reusable pattern live?” use this order:
 
 1. `REPO-MAP.md` — navigation and discovery entry point.
-2. `01-lab-ai-skill-pack/skills/router/SKILL.md` — task routing.
-3. `00-control/intelligence-tool-library-register-v1.0.md` — governed reusable tool/method/operator status.
-4. `00-control/ai-asset-activation-operator-v0.1.md` — determine whether retrieved dormant/completed work may be activated.
-5. `01-lab-ai-skill-pack/.codex-plugin/plugin.json` — current packaged skill inventory.
-6. `capability-ingest/` — experiment and runtime-evidence records.
-7. The relevant host repository for implementation code.
+2. `NEXT-ACTION.md` — current execution rule and next legitimate action.
+3. `01-lab-ai-skill-pack/skills/router/SKILL.md` — task routing.
+4. `00-control/intelligence-tool-library-register-v1.0.md` — governed reusable tool/method/operator status.
+5. `00-control/ai-asset-activation-operator-v0.1.md` — determine whether retrieved dormant/completed work may be activated.
+6. `01-lab-ai-skill-pack/.codex-plugin/plugin.json` — current packaged skill inventory.
+7. `research/` — dated evidence-bound research, technology extractions and bounded experiments when the router points there.
+8. `capability-ingest/` — capability experiments and runtime-evidence records.
+9. The relevant host repository for implementation code.
 
 Do not create a second Tool Bank, capability registry or MCP/tool hierarchy merely because a remembered folder name is absent.
 
@@ -65,7 +71,11 @@ Do not create a second Tool Bank, capability registry or MCP/tool hierarchy mere
 | `05-build-checklists/` | Build, submission and MCP security checklists | You are reviewing readiness, safety or submission quality |
 | `06-prototypes/` | Bounded prototypes | You need prototype implementation evidence rather than authority claims |
 | `capability-ingest/` | Capability-ingest experiments and runtime-evidence tests | You need evidence about whether a capability actually works under a defined test |
+| `research/` | Evidence-bound technology extractions, canonical research references and bounded research experiments | The router or a dated research decision points to an evidence-backed cross-project reference |
 | `system-zero/` | Registry consistency and system-control assets | You are checking system-level registry/control consistency |
+| `demos/` | Demonstration and QA artefacts for bounded capabilities such as Safe Intake | You need to run or inspect a demonstration rather than infer capability status from it |
+| `docs/` | Security and operational documentation | You need repository-level handling, review or security guidance |
+| `scripts/` | Repository utility scripts | You need an existing utility rather than a new capability or authority layer |
 
 ## First-read order
 
@@ -73,11 +83,14 @@ For a new builder or AI agent entering this repo:
 
 1. `README.md`
 2. `REPO-MAP.md`
-3. `01-lab-ai-skill-pack/skills/router/SKILL.md`
-4. `00-control/intelligence-tool-library-register-v1.0.md`
-5. `00-control/ai-asset-activation-operator-v0.1.md`
-6. `00-workspace-map/operating-principles.md`
-7. the specific skill, checklist, experiment record or host repository required by the task
+3. `NEXT-ACTION.md`
+4. `01-lab-ai-skill-pack/skills/router/SKILL.md`
+5. `00-control/intelligence-tool-library-register-v1.0.md`
+6. `00-control/ai-asset-activation-operator-v0.1.md`
+7. `00-workspace-map/operating-principles.md`
+8. the specific skill, checklist, research record, experiment record or host repository required by the task
+
+`PHASE-CLOSEOUT.md` is a historical record of the completed 17 May 2026 foundation phase. It is not part of the current cold-entry authority chain.
 
 ## Routing rule
 
@@ -88,11 +101,22 @@ When adding or integrating material:
 - If it defines how the workspace thinks, use `00-workspace-map/`.
 - If it is a reusable assistant behaviour, use `01-lab-ai-skill-pack/skills/` and keep the plugin manifest consistent.
 - If it is an extracted source pattern, record it through the existing extraction/control path rather than creating a new doctrine.
+- If it is a dated cross-project technology/research reference or bounded research experiment, use `research/` and preserve its evidence and revision boundary.
 - If it is capability-ingest or runtime-evidence work, use `capability-ingest/`.
 - If it is host-specific implementation, put code in the host repository rather than this cross-project discovery layer.
 - If it defines the Safe Intake workflow, use `03-safe-intake/` without reactivating the historical project by inference.
 - If it explains proof to a client, use `04-proof-packs/`.
 - If it checks readiness, safety or submission quality, use `05-build-checklists/`.
+
+## MCP routing
+
+The current cross-project MCP architecture reference is:
+
+`research/technology-extractions/mcp-2026-07-28-canonical-integration.md`
+
+Use `05-build-checklists/mcp-tool-security-checklist.md` for MCP security/readiness review.
+
+MCP handbook canon does not establish local implementation, protocol conformance, production readiness or a requirement to migrate a host system.
 
 ## Known non-canonical proposed structure
 
@@ -103,12 +127,13 @@ Their intended concerns are already represented by existing controls:
 - capability/tool authority and status → `00-control/intelligence-tool-library-register-v1.0.md`;
 - activation of retrieved prior work → `00-control/ai-asset-activation-operator-v0.1.md`;
 - reusable assistant behaviours → `01-lab-ai-skill-pack/skills/`;
+- MCP architecture reference → `research/technology-extractions/mcp-2026-07-28-canonical-integration.md`;
 - MCP/tool security review → `01-lab-ai-skill-pack/skills/tool-hint-security-review/` and `05-build-checklists/mcp-tool-security-checklist.md`;
 - capability evidence → `capability-ingest/` and applicable proof/test records.
 
 ## Site Studio implementation patterns
 
-The four retained Site Studio patterns are registered as governed candidate reusable implementation patterns in `00-control/intelligence-tool-library-register-v1.0.md`:
+The four retained Site Studio patterns are registered as governed reusable implementation patterns in `00-control/intelligence-tool-library-register-v1.0.md`, with status preserved per item:
 
 - Shared Authoritative State Surface v0.1;
 - Durable Human-to-Agent Work Request v0.1;
@@ -116,6 +141,12 @@ The four retained Site Studio patterns are registered as governed candidate reus
 - Lightweight Live State Synchronisation v0.1.
 
 They do not create a separate governance doctrine or Tool Bank. Host-specific implementation belongs in the applicable software repository and remains subject to that repository's gates.
+
+## Documentation-maintenance boundary
+
+`capability-ingest/merge-doc-maintenance.js` is a bounded staleness-signalling mechanism. Its automated proposal may refresh only the maintenance marker in `README.md`, `REPO-MAP.md` or `NEXT-ACTION.md`; it does not semantically repair documentation or establish that the documents are current.
+
+A marker update is a review signal. Semantic corrections remain explicit reviewed repository changes.
 
 ## Review rule
 
