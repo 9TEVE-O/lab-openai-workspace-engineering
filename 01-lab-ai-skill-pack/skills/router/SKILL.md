@@ -39,6 +39,7 @@ If the missing information would not materially change routing, proceed with the
 | Capability-ingest experiment or runtime-evidence test | `capability-ingest/` |
 | Document intake, redaction, approval, audit log | `safe-intake` |
 | ChatGPT App / MCP submission readiness | `app-submission` |
+| MCP protocol architecture, interoperability, `2026-07-28` migration or extension decision | `research/technology-extractions/mcp-2026-07-28-canonical-integration.md`; apply `05-build-checklists/mcp-tool-security-checklist.md` for security/readiness review |
 | Process accuracy, completeness, risks, gaps | `workflow-audit` |
 | Tool annotations, permissions, side effects, security | `tool-hint-security-review` |
 | Client-ready proof, demo script, evidence summary | `client-facing-proof-pack` |
@@ -57,8 +58,9 @@ Before creating a new capability, tool library, Tool Bank, MCP registry or reusa
 2. inspect `00-control/intelligence-tool-library-register-v1.0.md`;
 3. inspect the plugin manifest and relevant skill directories;
 4. inspect `capability-ingest/` for applicable experiment records;
-5. use AAO-001 when retrieved work may be dormant, completed, archived or not canon;
-6. create new structure only if the existing routes cannot represent the item without ambiguity.
+5. for MCP architecture/protocol questions, inspect `research/technology-extractions/mcp-2026-07-28-canonical-integration.md` and the current security checklist before inventing a new MCP structure;
+6. use AAO-001 when retrieved work may be dormant, completed, archived or not canon;
+7. create new structure only if the existing routes cannot represent the item without ambiguity.
 
 The absence of a remembered folder name is not evidence that no governed home exists.
 
@@ -94,6 +96,7 @@ If the task is simple and routing is obvious, proceed directly after a short rou
 - Do not create broad new project branches when the task fits an existing folder.
 - Do not create a second Tool Bank or capability registry until the existing control register has been checked.
 - Do not infer activation, approval or canon from storage, memory, filenames or repetition.
+- Do not infer local MCP implementation, security assurance or protocol conformance merely because the MCP architecture is handbook canon.
 - Do not treat external actions as read-only work.
 - Prefer evidence-preserving artefacts over loose summaries.
 
@@ -105,6 +108,7 @@ If the task is simple and routing is obvious, proceed directly after a short rou
 - Treating a proposed folder name as canonical architecture.
 - Reactivating completed or archived work because it was retrieved.
 - Sending a security-sensitive task directly to build without review.
+- Treating protocol canon as proof that a host implementation has passed its local gates.
 - Treating a proof pack as marketing instead of evidence.
 - Ignoring the user's explicit file or issue number.
 
