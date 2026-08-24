@@ -1,91 +1,85 @@
 # NEXT ACTION
 
-This file is the execution dashboard for `lab-openai-workspace-engineering`.
+This file is the current execution dashboard for `lab-openai-workspace-engineering`.
 
-Use it when entering the repo cold and deciding what to do next.
+Use it when entering the repository cold and deciding what action is actually authorised next.
 
 ## Current objective
 
-Keep the repository aligned with completed, tested or explicitly approved AI engineering capability without promoting active experiments, private client work, drafts or unsupported claims into canon.
+Keep the repository usable as a governed cross-project discovery, routing, research and evidence layer without turning every stored artefact, open issue or experiment into active work.
 
-## Current capability areas
+## Current repository state
 
-- Safe Intake and document-control patterns
-- LAB AI skill-pack routing and reusable skills
-- app/MCP submission and security review
-- System Zero governance and registry validation
-- AI Workflow Control Review
-- evidence-bound evaluation and proof records
-- controlled AI asset activation
-- tool-library governance and lifecycle control
-- bounded prototype review and repair practices
+The repository currently provides:
 
-## Repository sync state
+- a cold-entry discovery map in `REPO-MAP.md`;
+- reusable task routing through `01-lab-ai-skill-pack/skills/router/SKILL.md`;
+- governed capability/tool status in `00-control/intelligence-tool-library-register-v1.0.md`;
+- controlled activation decisions through `00-control/ai-asset-activation-operator-v0.1.md`;
+- capability and runtime-evidence experiments in `capability-ingest/`;
+- evidence-bound research and technology references in `research/`;
+- current MCP architecture canon in `research/technology-extractions/mcp-2026-07-28-canonical-integration.md`;
+- build, submission and security review checklists in `05-build-checklists/`;
+- host-specific implementation boundaries preserved outside this cross-project control layer.
 
-The previous execution dashboard was centred on the Safe Intake demo path. That path remains valid, but it no longer represents the full body of completed engineering work.
+`PHASE-CLOSEOUT.md` is a historical record of the completed 17 May 2026 foundation phase and is not current execution authority.
 
-The current sync batch records material capability completed or approved after the repository's previous main-branch update.
+## Single next legitimate action
 
-See:
-
-`00-control/REPO-SYNC-2026-08-19.md`
-
-## Active next move
-
-Complete one controlled repository sync:
+Use the existing control plane on the next real task.
 
 ```text
-verified project status
-→ preserve evidence boundary
-→ add or update repository record
-→ review diff
-→ run repository checks
-→ human merge decision
+real request
+→ README.md / REPO-MAP.md
+→ NEXT-ACTION.md
+→ router
+→ existing control, skill, research or evidence record
+→ host repository when implementation is required
+→ evidence / checks
+→ human decision where required
 ```
+
+Do not create proactive follow-on repository work merely to keep the system moving.
+
+If no real task requires a repository change, no repository change is required.
+
+## Activation rule
+
+An open issue, pull request, historical recommendation, stored experiment or remembered project does not become active by existence alone.
+
+Before continuing prior work, preserve its actual status and use the applicable control record. In particular:
+
+- do not reactivate historical experiments by inference;
+- do not promote held or incomplete capabilities;
+- do not treat MCP canon as a local implementation directive;
+- do not treat passing repository checks as proof of production readiness or correctness;
+- do not move host-specific implementation into this repository merely for centralisation.
 
 ## Admission gate
 
-Add work to canonical repository areas only when at least one of the following is true:
+Add or update canonical capability areas only when the stated status is supported by its own evidence and authority boundary.
 
-- completed and approved for the stated use;
-- tested with recorded evidence and limitations;
-- released for explicitly bounded internal use;
-- required as a factual record of a completed validation exercise.
+Do not upgrade status during repository synchronisation or navigation maintenance.
 
-Do not upgrade status during repository synchronisation.
+## Documentation-maintenance boundary
 
-## Hold outside canon
+The merge-triggered documentation-maintenance implementation is a bounded staleness signal. Its automated changes are marker-only and do not semantically repair documentation or establish freshness.
 
-Keep these out of canonical capability areas until their own gate is satisfied:
-
-- active or incomplete experiments;
-- candidate skills that remain non-canon;
-- product claims without required external validation;
-- unresolved version-authority cases;
-- private client documents or identifying evidence;
-- production, compliance, cybersecurity or commercial claims not supported by evidence.
+Semantic navigation changes require an explicit reviewed patch.
 
 ## Non-negotiable controls
 
 - Do not add secrets, API keys, `.env` values or credentials.
 - Do not add real client documents unless explicitly authorised and appropriately sanitised.
-- Do not claim production readiness because a prototype works locally.
+- Do not claim production readiness because a prototype or deterministic harness works.
 - Do not treat implementation as proof of correctness.
 - Preserve limitations, test scope and human authority boundaries.
-- Prefer reversible pull-request updates over direct uncontrolled changes to `main`.
+- Prefer reversible pull-request updates over uncontrolled direct changes to `main`.
 
-## Definition of done for this sync
+## Stopping rule
 
-The repository accurately represents the significant completed and approved engineering capability currently available, with unsupported or unresolved work explicitly held rather than silently promoted.
+When the current real task is correctly routed, completed or explicitly blocked and no concrete consequence requires another repository action, stop.
 
-## Review rule
-
-Before admitting an artefact, ask:
-
-```text
-What evidence supports this status, what is the authority boundary, and what claim would become false if we overstated it?
-```
-
-If the answer is unclear, hold the artefact outside canon.
+No action required means closed, not a request to invent a new project.
 
 <!-- merge-doc-maintenance:last-source-pr=48;sha=abcbaa6275df6501b6a16e40b6f8bc474ce73b5d -->
