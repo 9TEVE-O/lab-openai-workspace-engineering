@@ -1,9 +1,11 @@
 # Phase Closeout Document
 
+> **Historical record — completed 17 May 2026.** This document preserves the state, recommendations and limitations recorded at the end of the foundation phase. It is not the current repository entry point, execution dashboard or authority for what to do next. For current work, use `README.md` → `REPO-MAP.md` → `NEXT-ACTION.md` → the router and applicable control/evidence record. Recommendations below must not be reactivated by inference merely because they remain in this historical record.
+
 **Repository:** `9TEVE-O/lab-openai-workspace-engineering`  
 **Session Date:** 2026-05-17  
 **Session Status:** COMPLETE  
-**Next Action:** Use this document as the starting point before opening Phase 2 work.
+**Current Authority:** Historical completed-phase reference only; not current next-action authority.
 
 ---
 

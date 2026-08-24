@@ -63,7 +63,10 @@ function determineTargets(changedFiles) {
       file === 'REPO-MAP.md' ||
       file.startsWith('00-control/') ||
       file.startsWith('00-workspace-map/') ||
-      file.startsWith('capability-ingest/')
+      file.startsWith('01-lab-ai-skill-pack/') ||
+      file.startsWith('05-build-checklists/') ||
+      file.startsWith('capability-ingest/') ||
+      file.startsWith('research/')
     ) {
       targets.add('REPO-MAP.md');
     }
