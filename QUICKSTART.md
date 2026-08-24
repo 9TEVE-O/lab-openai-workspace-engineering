@@ -236,7 +236,7 @@ docs/security/static-hosting-headers.md
 .github/workflows/markdown-lint.yml
 .github/workflows/html-lint.yml
 .github/workflows/security-checks.yml
-.markdownlint-cli2.yml
+.markdownlint-cli2.yaml
 ```
 
 Repository settings still require manual verification in GitHub settings:
