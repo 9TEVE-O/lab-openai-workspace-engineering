@@ -2,18 +2,7 @@
 
 ## Purpose
 
-This repository turns scattered AI work into a structured, reusable, reviewable workspace.
-
-It contains:
-
-- LAB AI skill-pack files
-- Safe Intake specifications
-- Safe Intake clickable demo artefacts
-- QA runbooks and result records
-- security baseline files
-- evidence-led proof-pack material
-- OpenAI/plugin extraction notes
-- build and review checklists
+This repository turns scattered AI work into a structured, reusable, reviewable and evidence-bound engineering workspace.
 
 The operating rule is:
 
@@ -21,64 +10,82 @@ The operating rule is:
 Evidence over intentions.
 ```
 
-If a workflow matters, it should have a place, a purpose, a repeatable process, a skill file, an evidence trail, and a review gate.
+Repository presence is not approval. A prompt is not a system. An implementation is not proof of correctness. Status and authority must come from the applicable control and evidence records.
 
-## Current status
+## Current entry path
 
-Start here:
-
-```text
-PHASE-CLOSEOUT.md
-```
-
-That file records the current completed phase, known warnings, blocked tasks, and recommended next phase.
-
-Current summary:
-
-```text
-PHASE 1 COMPLETE
-SAFE INTAKE DEMO READY WITH WARNINGS
-SECURITY BASELINE COMPLETE
-GITHUB SETTINGS VERIFICATION STILL MANUAL
-ROBOT/PROFILE PATCH TASK BLOCKED
-```
-
-## First files to read
-
-Read these in order:
+For current work, start here:
 
 ```text
 README.md
-PHASE-CLOSEOUT.md
+REPO-MAP.md
 NEXT-ACTION.md
-DEMO-LIMITATIONS.md
-SECURITY.md
+01-lab-ai-skill-pack/skills/router/SKILL.md
+00-control/intelligence-tool-library-register-v1.0.md
 ```
 
-Then, for Safe Intake work:
+Use `00-control/ai-asset-activation-operator-v0.1.md` when retrieved work may be dormant, completed, archived, held or otherwise unsafe to reactivate by inference.
+
+`PHASE-CLOSEOUT.md` is a historical record of the completed 17 May 2026 foundation phase. Its former Phase 2 recommendations are preserved as historical context only and are not the current execution queue.
+
+## Current repository shape
+
+The workspace includes:
+
+- governed capability/tool and activation records in `00-control/`;
+- reusable skills and routing in `01-lab-ai-skill-pack/`;
+- source-pattern extractions in `02-openai-developers-extractions/`;
+- Safe Intake reference material in `03-safe-intake/` and `demos/`;
+- proof artefacts in `04-proof-packs/`;
+- build, submission and security checks in `05-build-checklists/`;
+- bounded prototypes in `06-prototypes/`;
+- capability and runtime-evidence experiments in `capability-ingest/`;
+- evidence-bound research, technology extractions and research experiments in `research/`;
+- System Zero controls in `system-zero/`;
+- security and operating documentation in `docs/`.
+
+Use `REPO-MAP.md` for the authoritative discovery route rather than creating a new folder or registry from memory.
+
+## MCP work
+
+For MCP protocol architecture, interoperability, migration or extension decisions, start with:
+
+```text
+research/technology-extractions/mcp-2026-07-28-canonical-integration.md
+```
+
+For MCP security/readiness review, use:
+
+```text
+05-build-checklists/mcp-tool-security-checklist.md
+```
+
+The canonical MCP research record does not establish that a host system has implemented MCP, passed conformance, achieved production readiness or should migrate.
+
+## Experiments and evidence
+
+Use `capability-ingest/` and applicable `research/experiments/` records when the question is whether a proposed capability actually passed a defined test.
+
+Preserve the recorded result exactly. Do not promote `ACTIVE`, `REVISE`, `held`, candidate or otherwise incomplete work because an implementation exists or a repository check passed.
+
+Host-specific implementation belongs in the applicable host repository unless this repository explicitly owns the bounded experiment or prototype under test.
+
+## Safe Intake reference workflow
+
+Safe Intake remains a completed/reference capability within its recorded limitations. It is not the repository-wide execution queue.
+
+Start with:
 
 ```text
 03-safe-intake/safe-intake-operating-invariant.md
 03-safe-intake/demo-scope.md
-03-safe-intake/safe-intake-clickable-prototype-plan.md
 03-safe-intake/safe-intake-demo-test-cases.md
 demos/safe-intake-clickable-prototype-runbook.md
 demos/safe-intake-live-browser-qa-result.md
 demos/safe-intake-accessibility-visual-qa-result.md
 ```
 
-Then, for security/hardening work:
-
-```text
-docs/security/secret-handling.md
-docs/security/review-gates.md
-docs/security/repository-protection-settings-review.md
-docs/security/static-hosting-headers.md
-```
-
-## How to run the Safe Intake demo
-
-From the repository root, run:
+To run the bounded demo from the repository root:
 
 ```bash
 python3 -m http.server 8080
@@ -90,100 +97,15 @@ Then open:
 http://localhost:8080/demos/safe-intake-clickable-prototype.html
 ```
 
-Alternative:
-
-```text
-Open demos/safe-intake-clickable-prototype.html directly in a browser.
-```
-
-## What the Safe Intake demo shows
-
-The demo shows a controlled document-intake flow:
-
-1. Synthetic document received
-2. Text extraction stage
-3. Sensitivity classification stage
-4. Sensitive-category findings
-5. Redacted working copy
-6. Human review gate
-7. Approval, request-changes, or block decision
-8. Safe summary only after approval
-9. Raw-content blocked paths
-10. Audit event trail
-
-## What the Safe Intake demo does not prove
-
-The demo does not prove:
-
-- legal compliance
-- production security
-- privacy-law compliance
-- real OCR accuracy
-- real model safety
-- real access-control enforcement
-- real-world PII detection accuracy
-- suitability for real client documents
-
-Do not describe it as a production compliance product.
-
-## QA workflow
-
-Use the runbook first:
-
-```text
-demos/safe-intake-clickable-prototype-runbook.md
-```
-
-Use the live-browser QA template when doing a new browser run:
-
-```text
-demos/safe-intake-live-browser-qa-result-template.md
-```
-
-Record the actual observed result here:
-
-```text
-demos/safe-intake-live-browser-qa-result.md
-```
-
-Review accessibility and visual warnings here:
-
-```text
-demos/safe-intake-accessibility-visual-qa-result.md
-```
+The demo does not prove legal compliance, production security, privacy-law compliance, real OCR accuracy, real model safety, real access-control enforcement, real-world PII detection accuracy or suitability for real client documents.
 
 ## Data safety rules
 
-Do not add real data to this repository.
+Do not add real personal, client, artist, contract, payment or credential data to repository fixtures or demonstrations unless a separately authorised and controlled process explicitly permits it.
 
-Do not use:
+Use synthetic fixtures for current demo/test work.
 
-- real personal data
-- real client data
-- real artist data
-- real contracts
-- real payment information
-- real credentials
-- real API keys
-- real screenshots containing sensitive material
-
-Use synthetic fixtures only.
-
-Current fixture:
-
-```text
-03-safe-intake/fixtures/synthetic-artist-onboarding-form.md
-```
-
-## Secret handling
-
-Read:
-
-```text
-docs/security/secret-handling.md
-```
-
-Never commit:
+Never commit raw secrets such as:
 
 ```text
 .env
@@ -193,128 +115,32 @@ Never commit:
 *.pem
 ```
 
-Never paste raw secrets into:
+Never paste raw secrets into Markdown files, issues, pull requests, comments, fixtures, screenshots, logs or proof packs.
 
-- Markdown files
-- issues
-- pull requests
-- comments
-- fixtures
-- screenshots
-- logs
-- proof packs
-
-Use placeholders only:
+Read:
 
 ```text
-OPENAI_API_KEY
-GITHUB_TOKEN
-PROVIDER_API_KEY
+docs/security/secret-handling.md
+docs/security/review-gates.md
 ```
 
 If a secret is exposed:
 
-1. Revoke or rotate it.
-2. Remove it from the branch.
-3. Check history and generated artefacts.
-4. Record the incident without copying the raw secret value.
+1. revoke or rotate it;
+2. remove it from the branch;
+3. check history and generated artefacts;
+4. record the incident without reproducing the raw secret value.
 
-## Security baseline
+## Documentation maintenance
 
-The repo includes:
+`capability-ingest/merge-doc-maintenance.js` is bounded staleness signalling, not semantic documentation repair.
 
-```text
-SECURITY.md
-.gitignore
-DEMO-LIMITATIONS.md
-docs/security/secret-handling.md
-docs/security/review-gates.md
-docs/security/repository-protection-settings-review.md
-docs/security/static-hosting-headers.md
-.github/dependabot.yml
-.github/workflows/secret-scan.yml
-.github/workflows/markdown-lint.yml
-.github/workflows/html-lint.yml
-.github/workflows/security-checks.yml
-.markdownlint-cli2.yml
-```
+It can refresh a maintenance marker in designated navigation files after relevant merges. A marker change does not establish that documentation is correct or current. Semantic corrections require an explicit reviewed patch.
 
-Repository settings still require manual verification in GitHub settings:
+## Opening follow-up issues
 
-- pull request requirement
-- required status checks
-- conversation resolution
-- force-push restriction
-- signed commits, if practical
-- admin bypass limits, if practical
-- secret scanning / push protection, if available
-- Dependabot alerts/security updates
+Use one issue per concrete job with a defined file or scope, acceptance criteria and review question.
 
-## How to open follow-up issues
+Avoid broad tasks such as “improve everything”, “make it production ready” or “add AI governance”.
 
-Use one issue per concrete job.
-
-Good issue shape:
-
-```markdown
-## Objective
-
-Describe the one job.
-
-## File to create or update
-
-- `path/to/file.md`
-
-## Acceptance criteria
-
-- [ ] specific check
-- [ ] specific check
-- [ ] specific check
-
-## Review question
-
-Can a future reviewer verify this without reading the original chat?
-```
-
-Avoid broad issues such as:
-
-```text
-Improve everything
-Make it production ready
-Add AI governance
-```
-
-Prefer concrete issues such as:
-
-```text
-Add ARCHITECTURE.md
-Add Safe Intake demo proof summary
-Verify GitHub branch protection settings
-Add ARIA live region for blocked messages
-```
-
-## Blocked task
-
-The following task is blocked:
-
-```text
-CODE BEHAVIOUR / TEACH THE ROBOT SPECIFIC patches
-```
-
-Do not continue this task until the exact source file path and repository are provided.
-
-Do not apply those patches to `.github/workflows/secret-scan.yml`.
-
-Do not create a replacement file unless explicitly instructed.
-
-## Recommended next jobs
-
-From the phase closeout, the next useful jobs are:
-
-```text
-#24 Add ARCHITECTURE.md
-#25 Add Safe Intake demo proof summary
-#26 Verify GitHub repository settings manually
-```
-
-Work in that order unless a higher-priority issue appears.
+An open issue or pull request is not automatically the repository's current next action. Check `NEXT-ACTION.md` and the item's own lifecycle/status before activating it.
