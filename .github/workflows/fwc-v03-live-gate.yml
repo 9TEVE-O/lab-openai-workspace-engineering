@@ -1,0 +1,67 @@
+name: FWC v0.3 live retrieval gate
+
+on:
+  push:
+    branches:
+      - test/fwc-v03-live-retrieval-20260827
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  live-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout isolated validation branch
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Reconstruct and verify frozen v0.3 artefacts
+        working-directory: validation/fwc-v03-live-gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat html.b64.part-1 html.b64.part-2 html.b64.part-3 html.b64.part-4 | base64 --decode > FWC_case_authority_verification_prototype_v0_3.html
+          echo "1bed2be3a81ffe26ebc1f23d35ed46432d673cb7b2fffdfbcc7ec6dbd2f1ff6a  fwc_retrieval_server_v0_3.py" | sha256sum --check --strict
+          echo "f9c7c1caafc92b6d08d0611d6afcee1e5a5308f1777cfa8ec75dc95e900bdf56  FWC_case_authority_verification_prototype_v0_3.html" | sha256sum --check --strict
+
+      - name: Install bounded test dependencies
+        run: |
+          python -m pip install --disable-pip-version-check pypdf==5.9.0 playwright
+          python -m playwright install --with-deps chromium
+
+      - name: Start unchanged v0.3 server
+        working-directory: validation/fwc-v03-live-gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          python fwc_retrieval_server_v0_3.py > server.log 2>&1 &
+          echo $! > server.pid
+          for i in $(seq 1 20); do
+            if curl --fail --silent http://127.0.0.1:8765/health >/dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat server.log
+          exit 1
+
+      - name: Run one genuine end-to-end live retrieval
+        working-directory: validation/fwc-v03-live-gate
+        run: python browser_gate.py
+
+      - name: Emit gate evidence
+        if: always()
+        working-directory: validation/fwc-v03-live-gate
+        shell: bash
+        run: |
+          echo "===== server.log ====="
+          cat server.log || true
+          echo "===== live_gate_result.json ====="
+          cat live_gate_result.json || true
