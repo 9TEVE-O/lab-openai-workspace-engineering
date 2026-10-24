@@ -1,0 +1,175 @@
+name: AI Brain Trust v3 Cross-Model Evaluation
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ai-brain-trust-v3-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  prompt-vault-import:
+    name: Verify isolated Prompt Vault import
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Restore frozen inputs
+        run: |
+          base64 --decode eval/inputs_bundle.tgz.b64 | tar -xz -C eval
+          echo "0bf79919087b340cc8b4f3915f417b731689c7291c36623ba69c70d84710b51b  eval/prompts_evidence_bound_v3.json" | sha256sum --check --strict
+          echo "c8706dfbc7557fe10daaf537ff4d66ac1e694f4bd02550612bcf78cd1a5a1986  eval/test_cases_v0.1.json" | sha256sum --check --strict
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install Playwright
+        run: |
+          npm init -y
+          npm install --no-save playwright@1.54.2
+          npx playwright install --with-deps chromium
+      - name: Import and verify v3 in isolated browser profile
+        run: |
+          node eval/verify_prompt_vault.mjs \
+            --vault eval/prompts_evidence_bound_v3.json \
+            --output-dir results/prompt-vault
+      - name: Upload Prompt Vault evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: prompt-vault-import
+          path: results/prompt-vault
+          if-no-files-found: error
+
+  model-eval:
+    name: Evaluate ${{ matrix.slug }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - slug: qwen2-5-0-5b-instruct-q4-k-m
+            model_name: Qwen/Qwen2.5-0.5B-Instruct-GGUF:Q4_K_M
+            model_url: https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct-GGUF/resolve/main/qwen2.5-0.5b-instruct-q4_k_m.gguf
+            model_file: qwen2.5-0.5b-instruct-q4_k_m.gguf
+            model_sha256: 74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db
+          - slug: smollm2-1-7b-instruct-q4-k-m
+            model_name: bartowski/SmolLM2-1.7B-Instruct-GGUF:Q4_K_M
+            model_url: https://huggingface.co/bartowski/SmolLM2-1.7B-Instruct-GGUF/resolve/main/SmolLM2-1.7B-Instruct-Q4_K_M.gguf
+            model_file: SmolLM2-1.7B-Instruct-Q4_K_M.gguf
+            model_sha256: 77665ea4815999596525c636fbeb56ba8b080b46ae85efef4f0d986a139834d7
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Restore frozen inputs
+        run: |
+          base64 --decode eval/inputs_bundle.tgz.b64 | tar -xz -C eval
+          echo "0bf79919087b340cc8b4f3915f417b731689c7291c36623ba69c70d84710b51b  eval/prompts_evidence_bound_v3.json" | sha256sum --check --strict
+          echo "c8706dfbc7557fe10daaf537ff4d66ac1e694f4bd02550612bcf78cd1a5a1986  eval/test_cases_v0.1.json" | sha256sum --check --strict
+      - name: Build pinned llama.cpp CLI
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential cmake git
+          git clone --depth 1 --branch b9964 https://github.com/ggml-org/llama.cpp.git /tmp/llama.cpp
+          cmake -S /tmp/llama.cpp -B /tmp/llama.cpp/build \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DGGML_NATIVE=OFF \
+            -DLLAMA_CURL=OFF
+          cmake --build /tmp/llama.cpp/build --config Release -j2 --target llama-cli
+      - name: Download and verify model
+        env:
+          MODEL_URL: ${{ matrix.model_url }}
+          MODEL_FILE: ${{ matrix.model_file }}
+          MODEL_SHA256: ${{ matrix.model_sha256 }}
+        run: |
+          mkdir -p models
+          curl --fail --location --retry 5 --retry-delay 5 \
+            --output "models/$MODEL_FILE" "$MODEL_URL"
+          echo "$MODEL_SHA256  models/$MODEL_FILE" | sha256sum --check --strict
+      - name: Run frozen nine fixtures unchanged
+        run: |
+          python3 eval/run_eval.py \
+            --llama-cli /tmp/llama.cpp/build/bin/llama-cli \
+            --model-path "models/${{ matrix.model_file }}" \
+            --model-name "${{ matrix.model_name }}" \
+            --prompts eval/prompts_evidence_bound_v3.json \
+            --cases eval/test_cases_v0.1.json \
+            --output-dir "results/${{ matrix.slug }}"
+      - name: Upload model transcript and raw JSON
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: model-${{ matrix.slug }}
+          path: results/${{ matrix.slug }}
+          if-no-files-found: error
+
+  publish-results:
+    name: Publish immutable run artefacts
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [prompt-vault-import, model-eval]
+    if: always()
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - uses: actions/download-artifact@v4
+        with:
+          path: collected
+      - name: Create run manifest
+        env:
+          RUN_ID: ${{ github.run_id }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          VAULT_RESULT: ${{ needs.prompt-vault-import.result }}
+          MODEL_RESULT: ${{ needs.model-eval.result }}
+        run: |
+          python3 - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+          root = Path('collected')
+          files = []
+          for p in sorted(root.rglob('*')):
+              if p.is_file():
+                  files.append({
+                      'path': str(p),
+                      'size_bytes': p.stat().st_size,
+                      'sha256': hashlib.sha256(p.read_bytes()).hexdigest(),
+                  })
+          manifest = {
+              'schema_version': '0.1',
+              'github_run_id': os.environ['RUN_ID'],
+              'github_run_attempt': os.environ['RUN_ATTEMPT'],
+              'source_head_sha': os.environ['HEAD_SHA'],
+              'pull_request_number': os.environ['PR_NUMBER'],
+              'prompt_vault_job_result': os.environ['VAULT_RESULT'],
+              'model_matrix_result': os.environ['MODEL_RESULT'],
+              'files': files,
+          }
+          root.mkdir(exist_ok=True)
+          (root / 'RUN_MANIFEST.json').write_text(json.dumps(manifest, indent=2), encoding='utf-8')
+          PY
+      - name: Push evidence to isolated result branch
+        env:
+          RESULT_BRANCH: eval-results/ai-brain-trust-v3-${{ github.run_id }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout --orphan "$RESULT_BRANCH"
+          git rm -rf .
+          mkdir -p results
+          cp -R collected/. results/
+          git add results
+          git commit -m "test: publish AI Brain Trust v3 cross-model run ${{ github.run_id }}"
+          git push origin "HEAD:$RESULT_BRANCH"
+          echo "RESULT_BRANCH=$RESULT_BRANCH"

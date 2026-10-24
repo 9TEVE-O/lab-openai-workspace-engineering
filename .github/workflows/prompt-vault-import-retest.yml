@@ -1,0 +1,44 @@
+name: Prompt Vault Isolated Import Retest
+
+on:
+  pull_request:
+    branches: [eval/ai-brain-trust-v3-cross-model]
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+
+jobs:
+  prompt-vault-import:
+    name: Verify isolated Prompt Vault import
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Restore frozen inputs
+        run: |
+          base64 --decode eval/inputs_bundle.tgz.b64 | tar -xz -C eval
+          echo "0bf79919087b340cc8b4f3915f417b731689c7291c36623ba69c70d84710b51b  eval/prompts_evidence_bound_v3.json" | sha256sum --check --strict
+          echo "c8706dfbc7557fe10daaf537ff4d66ac1e694f4bd02550612bcf78cd1a5a1986  eval/test_cases_v0.1.json" | sha256sum --check --strict
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install Playwright
+        run: |
+          npm init -y
+          npm install --no-save playwright@1.54.2
+          npx playwright install --with-deps chromium
+      - name: Import and verify v3 in isolated browser profile
+        run: |
+          xvfb-run -a node eval/verify_prompt_vault.mjs \
+            --vault eval/prompts_evidence_bound_v3.json \
+            --output-dir results/prompt-vault
+      - name: Upload Prompt Vault evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: prompt-vault-import-retest
+          path: results/prompt-vault
+          if-no-files-found: error
