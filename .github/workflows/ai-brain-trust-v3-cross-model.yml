@@ -41,7 +41,7 @@ jobs:
             --output-dir results/prompt-vault
       - name: Upload Prompt Vault evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: prompt-vault-import
           path: results/prompt-vault
@@ -105,7 +105,7 @@ jobs:
             --output-dir "results/${{ matrix.slug }}"
       - name: Upload model transcript and raw JSON
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: model-${{ matrix.slug }}
           path: results/${{ matrix.slug }}
