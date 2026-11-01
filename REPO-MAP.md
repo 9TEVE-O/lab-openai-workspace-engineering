@@ -152,4 +152,4 @@ A marker update is a review signal. Semantic corrections remain explicit reviewe
 
 A file belongs in this repo only if it helps convert scattered AI work into a reusable, reviewable, evidence-backed workflow. Presence is storage; status and authority must still be established through the applicable control record.
 
-<!-- merge-doc-maintenance:last-source-pr=61;sha=d6e6ec980d375c9792f14a68aee1ec01aeabe8e2 -->
+<!-- merge-doc-maintenance:last-source-pr=66;sha=1dfdb42b870068703568fa64554ad7cc263c400b -->
