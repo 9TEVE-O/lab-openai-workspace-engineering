@@ -1,0 +1,55 @@
+{
+  "schema": "lab.cdpr-proof-state/1",
+  "proof_id": "CDPR-001",
+  "task": "Prove restart-safe PR workflow with preserved authority",
+  "repository": "9TEVE-O/lab-openai-workspace-engineering",
+  "branch": "proof/cdpr-001-resume-pr-20261101",
+  "requested_at": "2026-11-01",
+  "parent_objective": "Governed, evidence-backed AI engineering that remains subordinate to human release decisions",
+  "current_objective": "After an interrupted execution, recover from the actual GitHub checkpoint, verify authority, run synthetic crash/restart tests and open a draft PR without merging or deploying",
+  "current_position": "CHECKPOINT_SAVED_AWAITING_FRESH_READ",
+  "completed": [
+    "Repository ownership and push permission checked",
+    "Governing README, REPO-MAP, NEXT-ACTION and router inspected",
+    "Isolated proof branch created"
+  ],
+  "assumptions": [
+    "This test uses GitHub as an independently retrievable checkpoint destination, not the unverified Ecosystem client-storage mapping",
+    "A killed local worker is a simulated client interruption, not a verified loss of the ChatGPT MCP transport"
+  ],
+  "unknown_to_ai": [
+    "Whether the real ChatGPT-to-Ecosystem connection survives a dropped network socket",
+    "Whether CI is configured to run the new targeted harness"
+  ],
+  "blocked_branches": [
+    "No merge",
+    "No deployment or release",
+    "No changes to main or live services",
+    "No credentials or customer data",
+    "No promotion to production-ready"
+  ],
+  "current_gate": "FRESH_INDEPENDENT_READ_OF_CHECKPOINT",
+  "next_action": "Start a new tool invocation and fetch this file from GitHub by branch; reconstruct objective and authority from returned bytes before proceeding",
+  "authority": {
+    "source": "User instruction on 2026-11-01 to prove one bounded workflow and stop before deployment; repository NEXT-ACTION.md and SECURITY.md govern",
+    "allowed": [
+      "branch-only synthetic proof",
+      "read-back of saved state",
+      "local deterministic tests",
+      "draft pull request",
+      "CI checks"
+    ],
+    "denied": [
+      "merge",
+      "deploy",
+      "production changes",
+      "secrets",
+      "unreviewed writes to main",
+      "scope expansion"
+    ],
+    "release_decision": "HUMAN_ONLY"
+  },
+  "revision": 1,
+  "status": "PAUSED_FOR_RECOVERY",
+  "last_transition": "INITIAL_CHECKPOINT"
+}

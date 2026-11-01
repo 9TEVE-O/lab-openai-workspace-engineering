@@ -1,0 +1,78 @@
+{
+  "schema": "lab.cdpr-proof-continuation/1",
+  "proof_id": "CDPR-001",
+  "repository": "9TEVE-O/lab-openai-workspace-engineering",
+  "branch": "proof/cdpr-001-resume-pr-20261101",
+  "source_checkpoint": {
+    "path": "capability-ingest/CDPR-001_STATE.json",
+    "commit_sha": "27b96ca833b9bc1dbe3543b84db1e2eecbfa0cf6",
+    "blob_sha": "bdb4e3213e53a998dbbcd2c540cbb720be59560f",
+    "revision": 1
+  },
+  "parent_objective": "Governed, evidence-backed AI engineering that remains subordinate to human release decisions",
+  "current_objective": "After an interrupted execution, recover from the actual GitHub checkpoint, verify authority, run synthetic crash/restart tests and open a draft PR without merging or deploying",
+  "current_position": "DRAFT_PR_CREATED_AND_TARGETED_CI_PASS",
+  "completed": [
+    "Repository ownership and push permission checked",
+    "Governing README, REPO-MAP, NEXT-ACTION and router inspected",
+    "Isolated proof branch created",
+    "New invocation recovered persisted checkpoint and governing authority from GitHub bytes",
+    "Independent synthetic worker-crash test passed locally",
+    "Draft PR #66 created without merge",
+    "Dedicated GitHub Actions recovery-proof job completed successfully on initial head SHA 3571502ce4597db2cad176ae30a6411009895f17"
+  ],
+  "assumptions": [
+    "This test uses GitHub as an independently retrievable checkpoint destination, not the unverified Ecosystem client-storage mapping",
+    "A killed local worker is a simulated client interruption, not a verified loss of the ChatGPT MCP transport"
+  ],
+  "unknown_to_ai": [
+    "Whether the real ChatGPT-to-Ecosystem connection survives a dropped network socket",
+    "Whether CI is configured to run the new targeted harness",
+    "Other GitHub checks were not all terminal when this continuation was written",
+    "Ecosystem task creation returned NOT_AVAILABLE"
+  ],
+  "blocked_branches": [
+    "No merge",
+    "No deployment or release",
+    "No changes to main or live services",
+    "No credentials or customer data",
+    "No promotion to production-ready"
+  ],
+  "current_gate": "HUMAN_REVIEW_OF_DRAFT_PR",
+  "next_action": "Review PR #66 and CI; do not merge or deploy without a new explicit human release decision",
+  "pr": {
+    "number": 66,
+    "url": "https://github.com/9TEVE-O/lab-openai-workspace-engineering/pull/66",
+    "draft": true,
+    "merged": false
+  },
+  "ci": {
+    "name": "CDPR-001 bounded crash and recovery proof",
+    "run_id": 41316401699,
+    "observed_status": "completed",
+    "observed_conclusion": "success",
+    "tested_head_sha": "3571502ce4597db2cad176ae30a6411009895f17"
+  },
+  "authority": {
+    "source": "User instruction on 2026-11-01 to prove one bounded workflow and stop before deployment; repository NEXT-ACTION.md and SECURITY.md govern",
+    "allowed": [
+      "branch-only synthetic proof",
+      "read-back of saved state",
+      "local deterministic tests",
+      "draft pull request",
+      "CI checks"
+    ],
+    "denied": [
+      "merge",
+      "deploy",
+      "production changes",
+      "secrets",
+      "unreviewed writes to main",
+      "scope expansion"
+    ],
+    "release_decision": "HUMAN_ONLY"
+  },
+  "status": "WAITING_HUMAN_REVIEW",
+  "revision": 2,
+  "success_claim_limit": "Synthetic worker interruption and connector checkpoint readback only; real client/network/session recovery unproven"
+}
