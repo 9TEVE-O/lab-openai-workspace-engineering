@@ -1,0 +1,10 @@
+{
+  "schema_version": "0.1",
+  "github_run_id": "41319570079",
+  "github_run_attempt": "1",
+  "source_head_sha": "578c67a4fa378a211082bb4f53069bf0cc007c48",
+  "pull_request_number": "66",
+  "prompt_vault_job_result": "failure",
+  "model_matrix_result": "cancelled",
+  "files": []
+}
