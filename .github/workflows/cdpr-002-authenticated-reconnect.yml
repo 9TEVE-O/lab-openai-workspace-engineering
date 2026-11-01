@@ -1,0 +1,29 @@
+name: CDPR-002 authenticated client reconnect proof
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'capability-ingest/cdpr-002-authenticated-client-reconnect.py'
+      - '.github/workflows/cdpr-002-authenticated-reconnect.yml'
+      - 'capability-ingest/CDPR-001_STATE.json'
+      - 'capability-ingest/CDPR-001_CONTINUATION.json'
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  authenticated-reconnect:
+    name: Real TLS disconnect and fresh authenticated GitHub client
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
+    steps:
+      - name: Checkout PR code
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Authenticate, disconnect actual socket, reconnect and verify
+        run: python3 capability-ingest/cdpr-002-authenticated-client-reconnect.py
