@@ -1,0 +1,31 @@
+{
+  "schema_version": "0.1",
+  "github_run_id": "41316463877",
+  "github_run_attempt": "1",
+  "source_head_sha": "1ce064d79531d82e11e0c1a0555c902635aecdbf",
+  "pull_request_number": "66",
+  "prompt_vault_job_result": "failure",
+  "model_matrix_result": "success",
+  "files": [
+    {
+      "path": "collected/model-qwen2-5-0-5b-instruct-q4-k-m/qwen-qwen2-5-0-5b-instruct-gguf-q4-k-m.json",
+      "size_bytes": 61331,
+      "sha256": "0407055b0932ebc58ad448d7b219cb1ada7c6baea8ef0753d03dfbe69fa7ae30"
+    },
+    {
+      "path": "collected/model-qwen2-5-0-5b-instruct-q4-k-m/qwen-qwen2-5-0-5b-instruct-gguf-q4-k-m.md",
+      "size_bytes": 58098,
+      "sha256": "c3c7fdf68b4d433fd0259980474b4bad4adcc8c71ab97e8865cadc27298a36b8"
+    },
+    {
+      "path": "collected/model-smollm2-1-7b-instruct-q4-k-m/bartowski-smollm2-1-7b-instruct-gguf-q4-k-m.json",
+      "size_bytes": 48341,
+      "sha256": "812e93c656f39f922ed7c25c220ee506304ff6e534370e7cc442d4f8661be808"
+    },
+    {
+      "path": "collected/model-smollm2-1-7b-instruct-q4-k-m/bartowski-smollm2-1-7b-instruct-gguf-q4-k-m.md",
+      "size_bytes": 44998,
+      "sha256": "01ebcf53ccd1834975fd3f7ca47b672cdeb8e472e80b69d409d35448251af74c"
+    }
+  ]
+}
