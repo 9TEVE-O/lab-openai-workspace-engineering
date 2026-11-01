@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: ${{ github.event.pull_request.head.sha }}
       - name: Restore frozen inputs
@@ -66,7 +66,7 @@ jobs:
             model_file: SmolLM2-1.7B-Instruct-Q4_K_M.gguf
             model_sha256: 77665ea4815999596525c636fbeb56ba8b080b46ae85efef4f0d986a139834d7
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: ${{ github.event.pull_request.head.sha }}
       - name: Restore frozen inputs
@@ -118,7 +118,7 @@ jobs:
     needs: [prompt-vault-import, model-eval]
     if: always()
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
