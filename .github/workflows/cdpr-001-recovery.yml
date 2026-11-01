@@ -1,0 +1,20 @@
+name: CDPR-001 bounded crash and recovery proof
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'capability-ingest/cdpr-001-recovery-test.py'
+      - 'capability-ingest/CDPR-001_STATE.json'
+      - '.github/workflows/cdpr-001-recovery.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  recovery-proof:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Crash, resume, and verify human release boundary
+        run: python3 capability-ingest/cdpr-001-recovery-test.py capability-ingest/CDPR-001_STATE.json
