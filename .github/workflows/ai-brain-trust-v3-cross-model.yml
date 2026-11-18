@@ -41,8 +41,14 @@ jobs:
           xvfb-run -a node eval/verify_prompt_vault.mjs \
             --vault eval/prompts_evidence_bound_v3.json \
             --output-dir results/prompt-vault
-      - name: Upload Prompt Vault evidence
+      - name: Verify evidence gate and refuse unsafe browser artifacts
+        id: evidence_gate
         if: always()
+        run: |
+          python3 -m unittest discover -s eval -p 'test_check_evidence_publication.py' -v
+          python3 eval/check_evidence_publication.py --mode browser --root results/prompt-vault
+      - name: Upload Prompt Vault evidence
+        if: always() && steps.evidence_gate.outcome == 'success'
         uses: actions/upload-artifact@v7
         with:
           name: prompt-vault-import
@@ -132,6 +138,10 @@ jobs:
       - uses: actions/download-artifact@v8
         with:
           path: collected
+      - name: Verify adversarial fixtures and refuse unsafe collected evidence
+        run: |
+          python3 -m unittest discover -s eval -p 'test_check_evidence_publication.py' -v
+          python3 eval/check_evidence_publication.py --mode collected --root collected
       - name: Create run manifest
         env:
           RUN_ID: ${{ github.run_id }}
