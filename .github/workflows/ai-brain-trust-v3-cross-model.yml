@@ -46,7 +46,12 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: prompt-vault-import
-          path: results/prompt-vault
+          # Only the verified report and screenshots are eligible for publication.
+          # Never archive an entire browser-output directory or Chromium profile.
+          path: |
+            results/prompt-vault/prompt-vault-import-report.json
+            results/prompt-vault/01-before-import.png
+            results/prompt-vault/02-after-import.png
           if-no-files-found: error
 
   model-eval:
