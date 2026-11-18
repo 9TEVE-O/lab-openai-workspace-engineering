@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import fs from 'node:fs';
 import path from 'node:path';
+import os from 'node:os';
 import { chromium } from 'playwright';
 
 const args = process.argv.slice(2);
@@ -14,7 +15,8 @@ const outputDir = path.resolve(getArg('--output-dir'));
 fs.mkdirSync(outputDir, { recursive: true });
 const vault = JSON.parse(fs.readFileSync(vaultFile, 'utf8'));
 const expectedTitles = vault.prompts.map((p) => p.title);
-const profileDir = path.join(outputDir, 'isolated-browser-profile');
+// Keep browser cookies, cache and session state out of published CI artefacts.
+const profileDir = fs.mkdtempSync(path.join(os.tmpdir(), 'prompt-vault-profile-'));
 
 const report = {
   schema_version: '0.4',
@@ -199,6 +201,7 @@ try {
 } finally {
   fs.writeFileSync(path.join(outputDir, 'prompt-vault-import-report.json'), JSON.stringify(report, null, 2));
   if (context) await context.close();
+  fs.rmSync(profileDir, { recursive: true, force: true });
 }
 
 if (!report.verified) process.exit(2);
