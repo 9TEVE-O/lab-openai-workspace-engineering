@@ -10,13 +10,21 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from import_codex_skill_bridge import EXPECTED, ImportErrorSafe, import_bridge
 
 
-def make_zip(target, missing=None, malicious=None):
+def make_zip(target, missing=None, malicious=None, body_metadata=False, executable=False):
     with ZipFile(target, 'w') as z:
         for name in sorted(EXPECTED):
             if name == missing:
                 continue
             data = f'---\nname: {name}\ndescription: "Use for {name}."\n---\n\nInstructions\n'
+            if body_metadata and name == 'engineering-closure':
+                # Required keys appear after an empty frontmatter block: must fail.
+                data = f'---\n---\nname: {name}\ndescription: body text\n'
             z.writestr(f'private-bundle/skills/{name}/SKILL.md', data)
+            if executable and name == 'engineering-closure':
+                helper = ZipInfo(f'private-bundle/skills/{name}/scripts/run.sh')
+                helper.create_system = 3
+                helper.external_attr = (stat.S_IFREG | 0o755) << 16
+                z.writestr(helper, '#!/bin/sh\nexit 0\n')
             z.writestr(f'private-bundle/skills/{name}/references/example.md', 'Example')
         if malicious:
             if malicious == 'symlink':
@@ -81,6 +89,23 @@ class ImporterTests(unittest.TestCase):
         file = self.root / '.agents' / 'skills' / 'role-evaluation' / 'SKILL.md'
         file.write_text(file.read_text() + 'changed')
         with self.assertRaisesRegex(ImportErrorSafe, 'refusing overwrite'):
+            import_bridge(self.archive, self.root, 'verify')
+
+
+    def test_body_metadata_does_not_count_as_frontmatter(self):
+        make_zip(self.archive, body_metadata=True)
+        with self.assertRaisesRegex(ImportErrorSafe, 'Invalid manifest frontmatter'):
+            import_bridge(self.archive, self.root, 'install')
+        self.assertFalse((self.root / '.agents').exists())
+
+    def test_executable_helper_permissions_preserved_and_checked(self):
+        make_zip(self.archive, executable=True)
+        import_bridge(self.archive, self.root, 'install')
+        helper = self.root / '.agents' / 'skills' / 'engineering-closure' / 'scripts' / 'run.sh'
+        self.assertEqual(stat.S_IMODE(helper.stat().st_mode) & 0o111, 0o111)
+        import_bridge(self.archive, self.root, 'verify')
+        helper.chmod(0o644)
+        with self.assertRaisesRegex(ImportErrorSafe, 'executable permissions differ'):
             import_bridge(self.archive, self.root, 'verify')
 
 
