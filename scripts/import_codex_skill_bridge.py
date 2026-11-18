@@ -51,6 +51,7 @@ def _verify_filename(info):
 
 def _load_archive(path):
     contents = {}
+    exec_bits = {}
     total = 0
     try:
         with ZipFile(path) as archive:
@@ -73,6 +74,8 @@ def _load_archive(path):
                 if rel in contents:
                     raise ImportErrorSafe("Duplicate archive member")
                 contents[rel] = archive.read(info)
+                # Preserve only the safe executable bits; never set setuid/setgid.
+                exec_bits[rel] = stat.S_IMODE((info.external_attr >> 16) & 0xFFFF) & 0o111
     except (BadZipFile, OSError) as exc:
         raise ImportErrorSafe(f"Could not read archive: {exc}") from exc
 
@@ -85,15 +88,23 @@ def _load_archive(path):
             text = contents[manifest].decode("utf-8")
         except (KeyError, UnicodeDecodeError) as exc:
             raise ImportErrorSafe(f"Missing or invalid SKILL.md: {name}") from exc
-        if not text.startswith("---\n") or not re.search(
-            r"^name:\s*['\"]?" + re.escape(name) + r"['\"]?\s*$",
-            text, re.MULTILINE,
-        ) or not re.search(r"^description:\s*\S+", text, re.MULTILINE):
+        lines = text.splitlines()
+        if not lines or lines[0] != "---":
             raise ImportErrorSafe(f"Invalid manifest frontmatter: {name}")
-    return contents
+        try:
+            closing = lines.index("---", 1)
+        except ValueError as exc:
+            raise ImportErrorSafe(f"Missing closing frontmatter delimiter: {name}") from exc
+        frontmatter = "\n".join(lines[1:closing])
+        if not re.search(
+            r"^name:[ \t]*['\\\"]?" + re.escape(name) + r"['\\\"]?[ \t]*$",
+            frontmatter, re.MULTILINE,
+        ) or not re.search(r"^description:[ \t]*\S+", frontmatter, re.MULTILINE):
+            raise ImportErrorSafe(f"Invalid manifest frontmatter: {name}")
+    return contents, exec_bits
 
 
-def _check_destination(root, contents):
+def _check_destination(root, contents, exec_bits):
     if not root.is_dir() or root.is_symlink():
         raise ImportErrorSafe("Project root must be an existing real directory")
     dest = root / ".agents" / "skills"
@@ -117,7 +128,12 @@ def _check_destination(root, contents):
             if file.is_symlink():
                 raise ImportErrorSafe(f"Existing skill contains symlinks: {name}")
             if file.is_file():
-                actual[file.relative_to(folder).as_posix()] = file.read_bytes()
+                relative = file.relative_to(folder).as_posix()
+                actual[relative] = file.read_bytes()
+                expected = exec_bits.get(PurePosixPath(name, relative), 0)
+                observed = stat.S_IMODE(file.stat().st_mode) & 0o111
+                if observed != expected:
+                    raise ImportErrorSafe(f"Existing skill executable permissions differ: {name}/{relative}")
         if actual != files:
             raise ImportErrorSafe(f"Existing skill differs; refusing overwrite: {name}")
         decisions[name] = "unchanged"
@@ -127,8 +143,8 @@ def _check_destination(root, contents):
 def import_bridge(archive_path, root, mode):
     archive_path = Path(archive_path).expanduser().resolve(strict=True)
     root = Path(root).expanduser().resolve(strict=True)
-    contents = _load_archive(archive_path)
-    dest, plan = _check_destination(root, contents)
+    contents, exec_bits = _load_archive(archive_path)
+    dest, plan = _check_destination(root, contents, exec_bits)
     if mode == "verify" and "install" in plan.values():
         raise ImportErrorSafe("Missing installed skills: " + ", ".join(k for k, v in plan.items() if v == "install"))
     if mode == "install" and "install" in plan.values():
@@ -142,13 +158,14 @@ def import_bridge(archive_path, root, mode):
                 target = tmp_path.joinpath(*rel.parts)
                 target.parent.mkdir(parents=True, exist_ok=True)
                 target.write_bytes(blob)
+                target.chmod(0o644 | exec_bits[rel])
             for name in sorted(EXPECTED):
                 if plan[name] == "install":
                     if (dest / name).exists() or (dest / name).is_symlink():
                         raise ImportErrorSafe(f"Destination appeared during install: {name}")
                     os.rename(tmp_path / name, dest / name)
     if mode != "dry-run":
-        _, after = _check_destination(root, contents)
+        _, after = _check_destination(root, contents, exec_bits)
         if "install" in after.values():
             raise ImportErrorSafe("Post-install readback failed")
     return {
