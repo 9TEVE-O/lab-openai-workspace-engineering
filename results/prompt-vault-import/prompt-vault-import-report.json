@@ -1,0 +1,461 @@
+{
+  "schema_version": "0.4",
+  "target": "https://appliedaihub.org/tools/prompt-vault/",
+  "isolated_profile": true,
+  "vault_file": "prompts_evidence_bound_v3.json",
+  "vault_title_expected": "AI Top Advisor Pack — Evidence-Bound Decision Support",
+  "prompt_titles_expected": [
+    "The World-Class Advisor Blueprint",
+    "The Second Brain Career Accelerator",
+    "The Wealth Architecture Strategist"
+  ],
+  "imported": true,
+  "import_mode": "clear_and_overwrite",
+  "verified": true,
+  "page_url": "https://appliedaihub.org/tools/prompt-vault/",
+  "navigation_warning": null,
+  "challenge_detected": false,
+  "visible_buttons": [
+    {
+      "text": "0",
+      "title": "Open Navigation Menu",
+      "aria": "Open Navigation Sidebar"
+    },
+    {
+      "text": "",
+      "title": null,
+      "aria": "AI Digests Submenu"
+    },
+    {
+      "text": "🎯 Prompts",
+      "title": null,
+      "aria": "Prompts Menu"
+    },
+    {
+      "text": "✨ More",
+      "title": null,
+      "aria": "More Menu"
+    },
+    {
+      "text": "Search...\nCtrl+K",
+      "title": null,
+      "aria": "Open Search"
+    },
+    {
+      "text": "",
+      "title": null,
+      "aria": "Toggle dark mode"
+    },
+    {
+      "text": "",
+      "title": "Search",
+      "aria": "Open Search"
+    },
+    {
+      "text": "",
+      "title": "Toggle Theme",
+      "aria": "Toggle theme"
+    },
+    {
+      "text": "Copy Link\nTool canonical URL",
+      "title": null,
+      "aria": null
+    },
+    {
+      "text": "Show More Labels",
+      "title": null,
+      "aria": null
+    },
+    {
+      "text": "",
+      "title": "Grid View",
+      "aria": null
+    },
+    {
+      "text": "",
+      "title": "Category View",
+      "aria": null
+    },
+    {
+      "text": "",
+      "title": "Export as JSON",
+      "aria": "Export as JSON"
+    },
+    {
+      "text": "",
+      "title": "Export as CSV",
+      "aria": "Export as CSV"
+    },
+    {
+      "text": "",
+      "title": "Clear Vault",
+      "aria": "Clear Vault"
+    },
+    {
+      "text": "",
+      "title": "New Prompt",
+      "aria": "New Prompt"
+    },
+    {
+      "text": "",
+      "title": "Unpin",
+      "aria": null
+    },
+    {
+      "text": "... Read More",
+      "title": null,
+      "aria": null
+    },
+    {
+      "text": "",
+      "title": "Edit",
+      "aria": "Edit Prompt"
+    },
+    {
+      "text": "",
+      "title": "Delete",
+      "aria": "Delete Prompt"
+    },
+    {
+      "text": "",
+      "title": "Share Link",
+      "aria": "Share Link"
+    },
+    {
+      "text": "",
+      "title": "Clone Options",
+      "aria": "Clone Options"
+    },
+    {
+      "text": "Run",
+      "title": "Run Prompt",
+      "aria": "Run Prompt"
+    },
+    {
+      "text": "",
+      "title": "Pin to top",
+      "aria": null
+    },
+    {
+      "text": "... Read More",
+      "title": null,
+      "aria": null
+    },
+    {
+      "text": "",
+      "title": "Edit",
+      "aria": "Edit Prompt"
+    },
+    {
+      "text": "",
+      "title": "Delete",
+      "aria": "Delete Prompt"
+    },
+    {
+      "text": "",
+      "title": "Share Link",
+      "aria": "Share Link"
+    },
+    {
+      "text": "",
+      "title": "Clone Options",
+      "aria": "Clone Options"
+    },
+    {
+      "text": "Run",
+      "title": "Run Prompt",
+      "aria": "Run Prompt"
+    },
+    {
+      "text": "",
+      "title": "Pin to top",
+      "aria": null
+    },
+    {
+      "text": "... Read More",
+      "title": null,
+      "aria": null
+    },
+    {
+      "text": "",
+      "title": "Edit",
+      "aria": "Edit Prompt"
+    },
+    {
+      "text": "",
+      "title": "Delete",
+      "aria": "Delete Prompt"
+    },
+    {
+      "text": "",
+      "title": "Share Link",
+      "aria": "Share Link"
+    },
+    {
+      "text": "",
+      "title": "Clone Options",
+      "aria": "Clone Options"
+    },
+    {
+      "text": "Run",
+      "title": "Run Prompt",
+      "aria": "Run Prompt"
+    },
+    {
+      "text": "OK",
+      "title": null,
+      "aria": null
+    },
+    {
+      "text": "Start Organizing Now",
+      "title": null,
+      "aria": null
+    },
+    {
+      "text": "Unlock Now",
+      "title": null,
+      "aria": null
+    },
+    {
+      "text": "",
+      "title": null,
+      "aria": "Close drawer"
+    },
+    {
+      "text": "",
+      "title": null,
+      "aria": null
+    },
+    {
+      "text": "🚀 Case Studies",
+      "title": null,
+      "aria": null
+    },
+    {
+      "text": "📊 Visual Decks",
+      "title": null,
+      "aria": null
+    },
+    {
+      "text": "🎙️ Interview Briefs",
+      "title": null,
+      "aria": null
+    },
+    {
+      "text": "🛠️ Privacy Tools",
+      "title": null,
+      "aria": null
+    },
+    {
+      "text": "📝 RTGO Framework",
+      "title": null,
+      "aria": null
+    },
+    {
+      "text": "⚡ AI Stack",
+      "title": null,
+      "aria": null
+    },
+    {
+      "text": "📊 Datasets",
+      "title": null,
+      "aria": null
+    },
+    {
+      "text": "\"AutoShorts\"",
+      "title": null,
+      "aria": null
+    },
+    {
+      "text": "\"Compressor\"",
+      "title": null,
+      "aria": null
+    },
+    {
+      "text": "\"Prompt\"",
+      "title": null,
+      "aria": null
+    },
+    {
+      "text": "\"QuantAlpha\"",
+      "title": null,
+      "aria": null
+    },
+    {
+      "text": "ESC\nClose",
+      "title": "Close Search",
+      "aria": "Close modal"
+    }
+  ],
+  "visible_links": [
+    {
+      "text": "🏠 Home",
+      "href": "https://appliedaihub.org/",
+      "title": null,
+      "aria": null
+    },
+    {
+      "text": "⚡ AI Digests",
+      "href": "https://appliedaihub.org/ai-digests/",
+      "title": null,
+      "aria": "AI Digests Menu"
+    },
+    {
+      "text": "",
+      "href": "https://appliedaihub.org/ai-digests/interview-briefs/",
+      "title": null,
+      "aria": null
+    },
+    {
+      "text": "",
+      "href": "https://appliedaihub.org/ai-digests/visual-decks/",
+      "title": null,
+      "aria": null
+    },
+    {
+      "text": "",
+      "href": "https://appliedaihub.org/ai-digests/case-studies/",
+      "title": null,
+      "aria": null
+    },
+    {
+      "text": "",
+      "href": "https://appliedaihub.org/prompts/",
+      "title": null,
+      "aria": null
+    },
+    {
+      "text": "",
+      "href": "https://appliedaihub.org/prompts/free/",
+      "title": null,
+      "aria": null
+    },
+    {
+      "text": "🛠️ Tools",
+      "href": "https://appliedaihub.org/tools/",
+      "title": null,
+      "aria": null
+    },
+    {
+      "text": "📝 Blog",
+      "href": "https://appliedaihub.org/blog/",
+      "title": null,
+      "aria": null
+    },
+    {
+      "text": "🧩 AI Stack",
+      "href": "https://appliedaihub.org/stack/",
+      "title": null,
+      "aria": null
+    },
+    {
+      "text": "📊 Datasite",
+      "href": "https://appliedaihub.org/datasite/",
+      "title": null,
+      "aria": null
+    },
+    {
+      "text": "ℹ️ About",
+      "href": "https://appliedaihub.org/about/",
+      "title": null,
+      "aria": null
+    },
+    {
+      "text": "",
+      "href": "https://appliedaihub.org/stack/",
+      "title": null,
+      "aria": null
+    },
+    {
+      "text": "",
+      "href": "https://appliedaihub.org/datasite/",
+      "title": null,
+      "aria": null
+    },
+    {
+      "text": "",
+      "href": "https://appliedaihub.org/about/",
+      "title": null,
+      "aria": null
+    },
+    {
+      "text": "Share on 𝕏\nPost to your feed",
+      "href": "https://x.com/intent/tweet?text=Prompt%20Vault%0A%0AA%20local%2C%20privacy-first%20AI%20prompt%20manager.%20Organize%20your%20ChatGPT%2C%20Claude%2C%20and%20Gemini%20prompts%20securely%20in%20your%20browser%20with%20variables%20and%20one-click%20copy.&url=https%3A%2F%2Fappliedaihub.org%2Ftools%2Fprompt-vault%2F",
+      "title": null,
+      "aria": null
+    },
+    {
+      "text": "Share on LinkedIn\nPost to network",
+      "href": "https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fappliedaihub.org%2Ftools%2Fprompt-vault%2F",
+      "title": null,
+      "aria": null
+    },
+    {
+      "text": "Home",
+      "href": "https://appliedaihub.org/",
+      "title": null,
+      "aria": null
+    },
+    {
+      "text": "Tools",
+      "href": "https://appliedaihub.org/tools/",
+      "title": null,
+      "aria": null
+    },
+    {
+      "text": "",
+      "href": "https://x.com/intent/tweet?text=Prompt%20Vault%0A%0AA%20local%2C%20privacy-first%20AI%20prompt%20manager.%20Organize%20your%20ChatGPT%2C%20Claude%2C%20and%20Gemini%20prompts%20securely%20in%20your%20browser%20with%20variables%20and%20one-click%20copy.&url=https%3A%2F%2Fappliedaihub.org%2Ftools%2Fprompt-vault%2F",
+      "title": null,
+      "aria": null
+    },
+    {
+      "text": "",
+      "href": "https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fappliedaihub.org%2Ftools%2Fprompt-vault%2F",
+      "title": null,
+      "aria": null
+    },
+    {
+      "text": "Privacy Policy",
+      "href": "https://appliedaihub.org/privacy/",
+      "title": null,
+      "aria": null
+    },
+    {
+      "text": "Extension Privacy",
+      "href": "https://appliedaihub.org/extensions/privacy/",
+      "title": null,
+      "aria": null
+    },
+    {
+      "text": "Terms of Service",
+      "href": "https://appliedaihub.org/terms/",
+      "title": null,
+      "aria": null
+    },
+    {
+      "text": "Refund Policy",
+      "href": "https://appliedaihub.org/refund/",
+      "title": null,
+      "aria": null
+    },
+    {
+      "text": "Contact",
+      "href": "https://appliedaihub.org/about/",
+      "title": null,
+      "aria": null
+    }
+  ],
+  "indexeddb": [
+    {
+      "name": "PromptVaultDB",
+      "version": 40,
+      "stores": [
+        "categoryMetas",
+        "prompts"
+      ]
+    }
+  ],
+  "error": null,
+  "prompt_titles_missing": [],
+  "vault_title_visible": true
+}
