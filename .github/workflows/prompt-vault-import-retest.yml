@@ -11,7 +11,8 @@ permissions:
 jobs:
   prompt-vault-import:
     name: Verify isolated Prompt Vault import
-    runs-on: ubuntu-latest
+    # Playwright 1.54.2 requires a supported runner for Chromium installation.
+    runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
@@ -35,10 +36,21 @@ jobs:
           xvfb-run -a node eval/verify_prompt_vault.mjs \
             --vault eval/prompts_evidence_bound_v3.json \
             --output-dir results/prompt-vault
-      - name: Upload Prompt Vault evidence
+      - name: Verify evidence gate and refuse unsafe browser artifacts
+        id: evidence_gate
         if: always()
+        run: |
+          python3 -m unittest discover -s eval -p 'test_check_evidence_publication.py' -v
+          python3 eval/check_evidence_publication.py --mode browser --root results/prompt-vault
+      - name: Upload Prompt Vault evidence
+        if: always() && steps.evidence_gate.outcome == 'success'
         uses: actions/upload-artifact@v7
         with:
           name: prompt-vault-import-retest
-          path: results/prompt-vault
+          # Only the verified report and screenshots are eligible for publication.
+          # Never archive an entire browser-output directory or Chromium profile.
+          path: |
+            results/prompt-vault/prompt-vault-import-report.json
+            results/prompt-vault/01-before-import.png
+            results/prompt-vault/02-after-import.png
           if-no-files-found: error

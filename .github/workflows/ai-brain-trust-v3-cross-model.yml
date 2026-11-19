@@ -15,7 +15,8 @@ concurrency:
 jobs:
   prompt-vault-import:
     name: Verify isolated Prompt Vault import
-    runs-on: ubuntu-latest
+    # Playwright 1.54.2 cannot install Chromium dependencies on ubuntu-26.04.
+    runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
@@ -36,15 +37,27 @@ jobs:
           npx playwright install --with-deps chromium
       - name: Import and verify v3 in isolated browser profile
         run: |
-          node eval/verify_prompt_vault.mjs \
+          # The verifier launches a headed Chromium context.
+          xvfb-run -a node eval/verify_prompt_vault.mjs \
             --vault eval/prompts_evidence_bound_v3.json \
             --output-dir results/prompt-vault
-      - name: Upload Prompt Vault evidence
+      - name: Verify evidence gate and refuse unsafe browser artifacts
+        id: evidence_gate
         if: always()
+        run: |
+          python3 -m unittest discover -s eval -p 'test_check_evidence_publication.py' -v
+          python3 eval/check_evidence_publication.py --mode browser --root results/prompt-vault
+      - name: Upload Prompt Vault evidence
+        if: always() && steps.evidence_gate.outcome == 'success'
         uses: actions/upload-artifact@v7
         with:
           name: prompt-vault-import
-          path: results/prompt-vault
+          # Only the verified report and screenshots are eligible for publication.
+          # Never archive an entire browser-output directory or Chromium profile.
+          path: |
+            results/prompt-vault/prompt-vault-import-report.json
+            results/prompt-vault/01-before-import.png
+            results/prompt-vault/02-after-import.png
           if-no-files-found: error
 
   model-eval:
@@ -125,6 +138,10 @@ jobs:
       - uses: actions/download-artifact@v8
         with:
           path: collected
+      - name: Verify adversarial fixtures and refuse unsafe collected evidence
+        run: |
+          python3 -m unittest discover -s eval -p 'test_check_evidence_publication.py' -v
+          python3 eval/check_evidence_publication.py --mode collected --root collected
       - name: Create run manifest
         env:
           RUN_ID: ${{ github.run_id }}
@@ -161,7 +178,7 @@ jobs:
           PY
       - name: Push evidence to isolated result branch
         env:
-          RESULT_BRANCH: eval-results/ai-brain-trust-v3-${{ github.run_id }}
+          RESULT_BRANCH: eval-results/ai-brain-trust-v3-${{ github.run_id }}-attempt-${{ github.run_attempt }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
